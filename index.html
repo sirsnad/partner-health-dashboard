@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Partner Health Summary — April 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #000050;
+  --lime: #B0F467;
+  --white: #FFFFFF;
+  --teal: #93DFE3;
+  --yellow: #FCFE67;
+  --red: #EF4444;
+  --green: #22C55E;
+  --amber: #F59E0B;
+  --gray-bg: #F1F5F9;
+  --gray-border: #E2E8F0;
+  --gray-text: #64748B;
+  --gray-light: #CBD5E1;
+  --bar-green: #B0F467;
+  --bar-yellow: #FCFE67;
+  --bar-red: #EF4444;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',system-ui,sans-serif; background:#f8fafc; color:var(--navy); }
+.header { background:var(--navy); color:var(--white); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; }
+.header-left { font-size:14px; font-weight:600; }
+.header-center { font-size:14px; opacity:.85; }
+.header-right { font-size:13px; font-weight:700; letter-spacing:.5px; }
+.container { max-width:1200px; margin:0 auto; padding:24px; }
+h2.section-title { font-size:20px; font-weight:700; margin:32px 0 16px; color:var(--navy); }
+.card-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+@media(max-width:768px) { .card-grid { grid-template-columns:1fr; } }
+.card { background:var(--white); border:1px solid var(--gray-border); border-radius:12px; padding:20px; cursor:pointer; transition:box-shadow .2s,transform .15s; }
+.card:hover { box-shadow:0 4px 16px rgba(0,0,80,.1); transform:translateY(-2px); }
+.card.active { box-shadow:0 4px 16px rgba(0,0,80,.15); }
+.card-name { font-size:16px; font-weight:700; margin-bottom:12px; }
+.health-bar-track { height:8px; background:var(--gray-bg); border-radius:4px; margin-bottom:8px; overflow:hidden; }
+.health-bar-fill { height:100%; border-radius:4px; transition:width .4s ease; }
+.card-score { font-size:28px; font-weight:700; text-align:center; margin:8px 0; }
+.badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; color:var(--white); }
+.badge-healthy { background:var(--green); }
+.badge-monitor { background:var(--amber); }
+.badge-action { background:var(--red); }
+.badge-unknown { background:var(--gray-light); color:var(--navy); }
+.card-footer { text-align:center; margin-top:8px; }
+/* Partner detail */
+.detail { display:none; background:var(--white); border:1px solid var(--gray-border); border-radius:12px; margin-top:-8px; margin-bottom:20px; padding:24px; animation:fadeIn .25s ease; }
+.detail.open { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+.detail-grid { display:grid; grid-template-columns:1fr 1.5fr 1fr; gap:24px; }
+@media(max-width:900px) { .detail-grid { grid-template-columns:1fr; } }
+.detail-section h3 { font-size:13px; font-weight:600; color:var(--gray-text); margin-bottom:8px; text-transform:uppercase; letter-spacing:.5px; }
+.detail-composite { font-size:42px; font-weight:700; }
+.dim-row { margin-bottom:10px; }
+.dim-label { font-size:12px; color:var(--navy); margin-bottom:3px; }
+.dim-bar-track { height:14px; background:var(--gray-bg); border-radius:3px; position:relative; overflow:hidden; }
+.dim-bar-fill { height:100%; border-radius:3px; }
+.dim-score { font-size:12px; font-weight:700; position:absolute; right:6px; top:0; line-height:14px; color:var(--navy); }
+.region-row { display:flex; align-items:center; gap:8px; padding:6px 0; border-top:1px solid var(--gray-border); }
+.region-row:first-child { border-top:none; }
+.region-name { font-size:12px; width:48px; font-weight:600; }
+.region-bar-track { flex:1; height:8px; background:var(--gray-bg); border-radius:3px; overflow:hidden; }
+.region-bar-fill { height:100%; border-radius:3px; }
+.region-score { font-size:12px; font-weight:700; width:32px; text-align:right; }
+.qual-box { margin-bottom:12px; padding:12px; border-radius:8px; border-left:4px solid; background:var(--gray-bg); }
+.qual-box h4 { font-size:12px; font-weight:700; margin-bottom:6px; }
+.qual-box ul { list-style:none; padding:0; }
+.qual-box ul li { font-size:12px; color:var(--navy); padding:2px 0; }
+.qual-box ul li::before { content:"\2022 "; color:var(--gray-text); }
+.qual-box.working { border-left-color:var(--green); }
+.qual-box.attention { border-left-color:var(--red); }
+.qual-box.escalation-active { border-left-color:var(--red); background:rgba(239,68,68,.08); }
+.qual-box.escalation-none { border-left-color:var(--gray-light); }
+.qual-placeholder { font-size:12px; color:var(--gray-text); font-style:italic; }
+/* Tabs */
+.tabs { display:flex; gap:4px; margin-bottom:16px; flex-wrap:wrap; }
+.tab { padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; background:var(--gray-bg); color:var(--gray-text); border:none; transition:all .15s; }
+.tab:hover { background:var(--gray-border); }
+.tab.active { background:var(--navy); color:var(--white); }
+/* Trend chart */
+.trend-chart { display:flex; align-items:flex-end; gap:6px; height:120px; padding-top:20px; position:relative; }
+.trend-bar-wrap { display:flex; flex-direction:column; align-items:center; flex:1; height:100%; justify-content:flex-end; }
+.trend-val { font-size:10px; font-weight:700; margin-bottom:2px; }
+.trend-bar { width:100%; min-width:18px; max-width:40px; border-radius:3px 3px 0 0; }
+.trend-month { font-size:10px; color:var(--gray-text); margin-top:4px; }
+.trend-note { font-size:11px; color:var(--gray-text); font-style:italic; margin-top:8px; }
+.footer { background:var(--navy); color:rgba(255,255,255,.7); text-align:center; padding:14px; font-size:11px; margin-top:48px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">Global Commerce &middot; Partner Health Summary</div>
+  <div class="header-center">April 2026</div>
+  <div class="header-right">WPP Media</div>
+</div>
+<div class="container">
+  <h2 class="section-title">Portfolio Overview</h2>
+  <div class="card-grid" id="cardGrid"></div>
+  <div id="details"></div>
+</div>
+<div class="footer">
+  Global Commerce &middot; Partner Health Summary &middot;
+  Confidential — Internal Use Only &middot; April 2026
+</div>
+<script>
+const D = {"monthLabel": "April 2026", "partners": ["Amazon", "Criteo", "Incremental", "Pacvue", "Shalion", "Skai"], "regions": ["NA", "EMEA", "APAC", "LATAM"], "dimensions": [{"key": "relationship_health", "label": "Relationship Health"}, {"key": "product_performance", "label": "Product Performance"}, {"key": "support_responsiveness", "label": "Support & Responsiveness"}, {"key": "commercial_value", "label": "Commercial Value"}, {"key": "innovation_roadmap", "label": "Innovation & Roadmap"}, {"key": "team_adoption", "label": "Client & Team Adoption"}], "scoring": {"Amazon": {"composite": 7.21, "status": "Healthy", "dimensions": {"relationship_health": 7.5, "product_performance": 7.7, "support_responsiveness": 6.7, "commercial_value": 6.95, "innovation_roadmap": 6.0, "team_adoption": 7.55}}, "Criteo": {"composite": 7.68, "status": "Healthy", "dimensions": {"relationship_health": 7.95, "product_performance": 7.55, "support_responsiveness": 6.95, "commercial_value": 8.55, "innovation_roadmap": 7.0, "team_adoption": 7.85}}, "Incremental": {"composite": 4.45, "status": "Action Required", "dimensions": {"relationship_health": 4.1, "product_performance": 5.0, "support_responsiveness": 4.0, "commercial_value": 5.1, "innovation_roadmap": 4.0, "team_adoption": 4.1}}, "Pacvue": {"composite": 7.13, "status": "Healthy", "dimensions": {"relationship_health": 6.85, "product_performance": 7.55, "support_responsiveness": 7.8, "commercial_value": 6.8, "innovation_roadmap": 6.55, "team_adoption": 6.85}}, "Shalion": {"composite": 5.96, "status": "Monitor", "dimensions": {"relationship_health": 5.85, "product_performance": 6.55, "support_responsiveness": 5.55, "commercial_value": 5.8, "innovation_roadmap": 4.85, "team_adoption": 6.4}}, "Skai": {"composite": 7.45, "status": "Healthy", "dimensions": {"relationship_health": 7.55, "product_performance": 7.85, "support_responsiveness": 6.85, "commercial_value": 7.55, "innovation_roadmap": 6.85, "team_adoption": 7.55}}}, "regional": {"Amazon": {"NA": 7.333333333333333, "EMEA": 6.666666666666667, "APAC": 6.333333333333333, "LATAM": 7.0}, "Criteo": {"NA": 7.833333333333333, "EMEA": 7.5, "APAC": 7.166666666666667, "LATAM": 7.333333333333333}, "Incremental": {"NA": 4.333333333333333, "EMEA": 4.833333333333333, "APAC": 3.8333333333333335, "LATAM": 3.3333333333333335}, "Pacvue": {"NA": 7.333333333333333, "EMEA": 7.0, "APAC": 6.666666666666667, "LATAM": 6.333333333333333}, "Shalion": {"NA": 6.166666666666667, "EMEA": 5.666666666666667, "APAC": 5.5, "LATAM": 5.0}, "Skai": {"NA": 7.666666666666667, "EMEA": 7.166666666666667, "APAC": 7.166666666666667, "LATAM": 6.666666666666667}}, "responses": {"Amazon": {"working": ["Strong account team and QBR quality", "Good executive relationship and roadmap visibility", "APAC team responsive and proactive", "Growing LATAM presence and team"], "attention": ["Reporting latency needs improvement", "SLA response times inconsistent across markets", "Limited retailer coverage in SEA markets", "Mexico coverage needs improvement"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 7.0, 6.0, 8.0], "working": "Strong account team and QBR quality", "attention": "Reporting latency needs improvement", "escalation": ""}, "EMEA": {"scores": [7.0, 7.0, 6.0, 7.0, 6.0, 7.0], "working": "Good executive relationship and roadmap visibility", "attention": "SLA response times inconsistent across markets", "escalation": ""}, "APAC": {"scores": [6.0, 7.0, 6.0, 6.0, 6.0, 7.0], "working": "APAC team responsive and proactive", "attention": "Limited retailer coverage in SEA markets", "escalation": ""}, "LATAM": {"scores": [7.0, 8.0, 7.0, 7.0, 6.0, 7.0], "working": "Growing LATAM presence and team", "attention": "Mexico coverage needs improvement", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.333333333333333}], "EMEA": [{"month": "Apr", "score": 6.666666666666667}], "APAC": [{"month": "Apr", "score": 6.333333333333333}], "LATAM": [{"month": "Apr", "score": 7.0}]}}, "Criteo": {"working": ["Commerce Max adoption strong across key clients", "Strong EMEA agency team and support", "Good API integrations and tech support", "Good relationship with LATAM lead"], "attention": ["Fee structure post-2026 still undefined", "Limited retail coverage outside UK and France", "Coverage gaps in Japan and Korea", "Limited Spanish language support"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 9.0, 7.0, 8.0], "working": "Commerce Max adoption strong across key clients", "attention": "Fee structure post-2026 still undefined", "escalation": ""}, "EMEA": {"scores": [8.0, 7.0, 7.0, 8.0, 7.0, 8.0], "working": "Strong EMEA agency team and support", "attention": "Limited retail coverage outside UK and France", "escalation": ""}, "APAC": {"scores": [7.0, 7.0, 6.0, 8.0, 7.0, 8.0], "working": "Good API integrations and tech support", "attention": "Coverage gaps in Japan and Korea", "escalation": ""}, "LATAM": {"scores": [8.0, 7.0, 7.0, 8.0, 7.0, 7.0], "working": "Good relationship with LATAM lead", "attention": "Limited Spanish language support", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.833333333333333}], "EMEA": [{"month": "Apr", "score": 7.5}], "APAC": [{"month": "Apr", "score": 7.166666666666667}], "LATAM": [{"month": "Apr", "score": 7.333333333333333}]}}, "Incremental": {"working": ["NA team managing transition carefully", "UK team remains engaged despite situation", "Some product capability still useful in APAC", "Some historical data access still useful"], "attention": ["No clear path to re-engagement", "US contract situation causing confusion in EMEA", "No clarity on global contract status", "Urgent \u2014 escalating to global team"], "escalation": ["Contract not renewed \u2014 partner going direct to clients", "Partner approaching LATAM clients directly"], "byRegion": {"NA": {"scores": [4.0, 5.0, 4.0, 5.0, 4.0, 4.0], "working": "NA team managing transition carefully", "attention": "No clear path to re-engagement", "escalation": "Contract not renewed \u2014 partner going direct to clients"}, "EMEA": {"scores": [5.0, 5.0, 4.0, 6.0, 4.0, 5.0], "working": "UK team remains engaged despite situation", "attention": "US contract situation causing confusion in EMEA", "escalation": ""}, "APAC": {"scores": [4.0, 4.0, 3.0, 5.0, 3.0, 4.0], "working": "Some product capability still useful in APAC", "attention": "No clarity on global contract status", "escalation": ""}, "LATAM": {"scores": [3.0, 4.0, 3.0, 4.0, 3.0, 3.0], "working": "Some historical data access still useful", "attention": "Urgent \u2014 escalating to global team", "escalation": "Partner approaching LATAM clients directly"}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 4.333333333333333}], "EMEA": [{"month": "Apr", "score": 4.833333333333333}], "APAC": [{"month": "Apr", "score": 3.8333333333333335}], "LATAM": [{"month": "Apr", "score": 3.3333333333333335}]}}, "Pacvue": {"working": ["Bid automation working well for key accounts", "Good onboarding and client support", "Good platform stability overall", "Responsive support for LATAM onboarding"], "attention": ["Dashboard reporting needs improvement", "Feature parity vs NA is lacking", "No dedicated APAC support team", "Limited Spanish language documentation"], "escalation": [], "byRegion": {"NA": {"scores": [7.0, 8.0, 8.0, 7.0, 7.0, 7.0], "working": "Bid automation working well for key accounts", "attention": "Dashboard reporting needs improvement", "escalation": ""}, "EMEA": {"scores": [7.0, 7.0, 8.0, 7.0, 6.0, 7.0], "working": "Good onboarding and client support", "attention": "Feature parity vs NA is lacking", "escalation": ""}, "APAC": {"scores": [7.0, 7.0, 7.0, 6.0, 6.0, 7.0], "working": "Good platform stability overall", "attention": "No dedicated APAC support team", "escalation": ""}, "LATAM": {"scores": [6.0, 7.0, 7.0, 6.0, 6.0, 6.0], "working": "Responsive support for LATAM onboarding", "attention": "Limited Spanish language documentation", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.333333333333333}], "EMEA": [{"month": "Apr", "score": 7.0}], "APAC": [{"month": "Apr", "score": 6.666666666666667}], "LATAM": [{"month": "Apr", "score": 6.333333333333333}]}}, "Shalion": {"working": ["Digital shelf coverage solid in NA", "Good retailer coverage in UK", "Reasonable digital shelf coverage in AU", "Some coverage in BR market"], "attention": ["Alert latency too slow for priority clients", "Pricing model needs review for EMEA", "No dedicated APAC support", "Pricing transparency lacking for LATAM"], "escalation": [], "byRegion": {"NA": {"scores": [6.0, 7.0, 6.0, 6.0, 5.0, 7.0], "working": "Digital shelf coverage solid in NA", "attention": "Alert latency too slow for priority clients", "escalation": ""}, "EMEA": {"scores": [6.0, 6.0, 5.0, 6.0, 5.0, 6.0], "working": "Good retailer coverage in UK", "attention": "Pricing model needs review for EMEA", "escalation": ""}, "APAC": {"scores": [6.0, 6.0, 5.0, 5.0, 5.0, 6.0], "working": "Reasonable digital shelf coverage in AU", "attention": "No dedicated APAC support", "escalation": ""}, "LATAM": {"scores": [5.0, 6.0, 5.0, 5.0, 4.0, 5.0], "working": "Some coverage in BR market", "attention": "Pricing transparency lacking for LATAM", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 6.166666666666667}], "EMEA": [{"month": "Apr", "score": 5.666666666666667}], "APAC": [{"month": "Apr", "score": 5.5}], "LATAM": [{"month": "Apr", "score": 5.0}]}}, "Skai": {"working": ["Cross-channel reporting excellent", "Solid product roadmap visibility", "Strong bid management tools", "Good client success engagement"], "attention": ["Limited LATAM support coverage", "Support tickets slow to resolve", "APAC documentation very limited", "No LATAM-specific reporting available"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 8.0, 7.0, 8.0], "working": "Cross-channel reporting excellent", "attention": "Limited LATAM support coverage", "escalation": ""}, "EMEA": {"scores": [7.0, 8.0, 7.0, 7.0, 7.0, 7.0], "working": "Solid product roadmap visibility", "attention": "Support tickets slow to resolve", "escalation": ""}, "APAC": {"scores": [7.0, 8.0, 7.0, 7.0, 7.0, 7.0], "working": "Strong bid management tools", "attention": "APAC documentation very limited", "escalation": ""}, "LATAM": {"scores": [7.0, 7.0, 6.0, 7.0, 6.0, 7.0], "working": "Good client success engagement", "attention": "No LATAM-specific reporting available", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.666666666666667}], "EMEA": [{"month": "Apr", "score": 7.166666666666667}], "APAC": [{"month": "Apr", "score": 7.166666666666667}], "LATAM": [{"month": "Apr", "score": 6.666666666666667}]}}}};
+
+function scoreColor(s) {
+  if (s == null) return 'var(--gray-light)';
+  if (s >= 7) return 'var(--bar-green)';
+  if (s >= 5) return 'var(--bar-yellow)';
+  return 'var(--bar-red)';
+}
+function badgeClass(status) {
+  if (!status) return 'badge-unknown';
+  const s = status.toLowerCase();
+  if (s.includes('healthy')) return 'badge-healthy';
+  if (s.includes('monitor')) return 'badge-monitor';
+  return 'badge-action';
+}
+function statusFromScore(s) {
+  if (s == null) return null;
+  if (s >= 7) return 'Healthy';
+  if (s >= 5) return 'Monitor';
+  return 'Action Required';
+}
+function fmtScore(v) { return v == null ? '\u2014' : v.toFixed(1); }
+
+function buildCards() {
+  const grid = document.getElementById('cardGrid');
+  const details = document.getElementById('details');
+  D.partners.forEach(p => {
+    const sc = D.scoring[p] || {};
+    const composite = sc.composite;
+    const status = sc.status || statusFromScore(composite);
+    const pct = composite != null ? Math.min(composite, 10) / 10 * 100 : 0;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.partner = p;
+    card.innerHTML = `
+      <div class="card-name">${p}</div>
+      <div class="health-bar-track"><div class="health-bar-fill" style="width:${pct}%;background:${scoreColor(composite)}"></div></div>
+      <div class="card-score">${fmtScore(composite)}</div>
+      <div class="card-footer"><span class="badge ${badgeClass(status)}">${status || '\u2014'}</span></div>`;
+    card.onclick = () => toggleDetail(p);
+    grid.appendChild(card);
+
+    const detail = document.createElement('div');
+    detail.className = 'detail';
+    detail.id = 'detail-' + p;
+    details.appendChild(detail);
+  });
+}
+
+let openPartner = null;
+function toggleDetail(p) {
+  const prev = openPartner;
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.detail').forEach(d => d.classList.remove('open'));
+  if (prev === p) { openPartner = null; return; }
+  openPartner = p;
+  document.querySelector(`.card[data-partner="${p}"]`).classList.add('active');
+  const el = document.getElementById('detail-' + p);
+  el.classList.add('open');
+  renderDetail(p, el, 'rollup');
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function renderDetail(p, el, view) {
+  const sc = D.scoring[p] || {};
+  const resp = D.responses[p] || {};
+  const regional = D.regional[p] || {};
+  const byRegion = resp.byRegion || {};
+  const byRegionHistory = resp.byRegionHistory || {};
+  const availRegions = D.regions.filter(r => byRegion[r]);
+
+  // Tab bar
+  let tabs = '<div class="tabs">';
+  tabs += `<button class="tab ${view==='rollup'?'active':''}" onclick="switchTab('${p}','rollup')">Roll-Up</button>`;
+  availRegions.forEach(r => {
+    tabs += `<button class="tab ${view===r?'active':''}" onclick="switchTab('${p}','${r}')">${r}</button>`;
+  });
+  tabs += '</div>';
+
+  let content;
+  if (view === 'rollup') {
+    content = renderRollup(p, sc, resp, regional);
+  } else {
+    content = renderRegionView(p, view, byRegion[view], byRegionHistory[view] || []);
+  }
+  el.innerHTML = tabs + '<div class="detail-grid">' + content + '</div>';
+}
+
+function switchTab(p, view) {
+  const el = document.getElementById('detail-' + p);
+  renderDetail(p, el, view);
+}
+
+function renderDimBars(dims) {
+  return D.dimensions.map(d => {
+    const s = dims ? dims[d.key] : null;
+    const pct = s != null ? Math.min(s,10)/10*100 : 0;
+    return `<div class="dim-row">
+      <div class="dim-label">${d.label}</div>
+      <div class="dim-bar-track"><div class="dim-bar-fill" style="width:${pct}%;background:${scoreColor(s)}"></div>
+        <span class="dim-score">${fmtScore(s)}</span></div></div>`;
+  }).join('');
+}
+
+function renderQual(working, attention, escalation) {
+  let h = '';
+  // Escalation
+  const escList = (escalation||[]).filter(t=>t);
+  if (escList.length) {
+    h += `<div class="qual-box escalation-active"><h4>Escalation Status</h4><ul>${escList.map(t=>'<li>'+t+'</li>').join('')}</ul></div>`;
+  } else {
+    h += `<div class="qual-box escalation-none"><h4>Escalation Status</h4><div class="qual-placeholder">No active escalations</div></div>`;
+  }
+  // Working
+  const wrkList = (working||[]).filter(t=>t);
+  h += `<div class="qual-box working"><h4>What's Working</h4>`;
+  h += wrkList.length ? `<ul>${wrkList.map(t=>'<li>'+t+'</li>').join('')}</ul>` : '<div class="qual-placeholder">No data</div>';
+  h += '</div>';
+  // Attention
+  const attnList = (attention||[]).filter(t=>t);
+  h += `<div class="qual-box attention"><h4>What Needs Attention</h4>`;
+  h += attnList.length ? `<ul>${attnList.map(t=>'<li>'+t+'</li>').join('')}</ul>` : '<div class="qual-placeholder">No data</div>';
+  h += '</div>';
+  return h;
+}
+
+function renderRollup(p, sc, resp, regional) {
+  const composite = sc.composite;
+  const status = sc.status || statusFromScore(composite);
+  // Left
+  let left = '<div class="detail-section">';
+  left += '<h3>Composite Score</h3>';
+  left += `<div class="detail-composite">${fmtScore(composite)}</div>`;
+  left += `<div style="margin:10px 0"><span class="badge ${badgeClass(status)}">${status||'\u2014'}</span></div>`;
+  left += '<h3 style="margin-top:24px">Regional Breakdown</h3>';
+  D.regions.forEach(r => {
+    const rs = regional[r];
+    const pct = rs != null ? Math.min(rs,10)/10*100 : 0;
+    left += `<div class="region-row"><span class="region-name">${r}</span>
+      <div class="region-bar-track"><div class="region-bar-fill" style="width:${pct}%;background:${scoreColor(rs)}"></div></div>
+      <span class="region-score">${fmtScore(rs)}</span></div>`;
+  });
+  left += '</div>';
+  // Middle
+  let mid = '<div class="detail-section"><h3>Dimension Scores</h3>' + renderDimBars(sc.dimensions) + '</div>';
+  // Right
+  let right = '<div class="detail-section">' + renderQual(resp.working, resp.attention, resp.escalation) + '</div>';
+  return left + mid + right;
+}
+
+function renderRegionView(p, region, rd, history) {
+  if (!rd) return '<div class="qual-placeholder">No data for this region</div>';
+  const scores = rd.scores || [];
+  const valid = scores.filter(s => s != null);
+  const composite = valid.length ? valid.reduce((a,b)=>a+b,0)/valid.length : null;
+  const status = statusFromScore(composite);
+  const dims = {};
+  D.dimensions.forEach((d,i) => { dims[d.key] = i < scores.length ? scores[i] : null; });
+
+  // Left — composite + trend chart
+  let left = '<div class="detail-section">';
+  left += '<h3>Composite Score</h3>';
+  left += `<div class="detail-composite">${fmtScore(composite)}</div>`;
+  left += `<div style="margin:10px 0"><span class="badge ${badgeClass(status)}">${status||'\u2014'}</span></div>`;
+  left += '<h3 style="margin-top:24px">Score Trend</h3>';
+  if (history.length) {
+    left += '<div class="trend-chart">';
+    const maxH = 90;
+    history.forEach(h => {
+      const hPct = h.score != null ? Math.min(h.score,10)/10 : 0;
+      const barH = Math.max(hPct * maxH, 2);
+      left += `<div class="trend-bar-wrap">
+        <div class="trend-val">${fmtScore(h.score)}</div>
+        <div class="trend-bar" style="height:${barH}px;background:${scoreColor(h.score)}"></div>
+        <div class="trend-month">${h.month}</div></div>`;
+    });
+    left += '</div>';
+    if (history.length === 1) left += '<div class="trend-note">More data available next month</div>';
+  } else {
+    left += '<div class="qual-placeholder">No historical data yet</div>';
+  }
+  left += '</div>';
+
+  // Middle — dimension bars
+  let mid = '<div class="detail-section"><h3>Dimension Scores</h3>' + renderDimBars(dims) + '</div>';
+  // Right — qualitative
+  let right = '<div class="detail-section">' + renderQual(
+    rd.working ? [rd.working] : [],
+    rd.attention ? [rd.attention] : [],
+    rd.escalation ? [rd.escalation] : []
+  ) + '</div>';
+  return left + mid + right;
+}
+
+buildCards();
+</script>
+</body>
+</html>
