@@ -25,36 +25,45 @@
   --bar-red: #EF4444;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Inter',system-ui,sans-serif; background:#f8fafc; color:var(--navy); }
-.header { background:var(--navy); color:var(--white); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; }
+html, body { height:100%; }
+body { font-family:'Inter',system-ui,sans-serif; background:#f8fafc; color:var(--navy); min-height:100vh; display:flex; flex-direction:column; }
+.header { background:var(--navy); color:var(--white); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
 .header-left { font-size:14px; font-weight:600; }
-.header-center { font-size:14px; opacity:.85; }
-.header-right { font-size:13px; font-weight:700; letter-spacing:.5px; }
-.container { max-width:1200px; margin:0 auto; padding:24px; }
-h2.section-title { font-size:20px; font-weight:700; margin:32px 0 16px; color:var(--navy); }
-.card-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-@media(max-width:768px) { .card-grid { grid-template-columns:1fr; } }
+.header-right { display:flex; align-items:center; gap:16px; font-size:13px; font-weight:600; }
+.header-right .divider { opacity:.45; }
+.wordmark-img { height:28px; width:auto; display:block; }
+.wordmark-text { font-size:13px; font-weight:700; letter-spacing:.5px; }
+.container { flex:1; width:100%; max-width:1200px; margin:0 auto; padding:24px; display:flex; flex-direction:column; }
+h2.section-title { font-size:20px; font-weight:700; margin:16px 0 16px; color:var(--navy); }
+.card-rows { display:flex; flex-direction:column; gap:20px; }
+.card-row { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+@media(max-width:768px) { .card-row { grid-template-columns:1fr; } }
 .card { background:var(--white); border:1px solid var(--gray-border); border-radius:12px; padding:20px; cursor:pointer; transition:box-shadow .2s,transform .15s; }
 .card:hover { box-shadow:0 4px 16px rgba(0,0,80,.1); transform:translateY(-2px); }
-.card.active { box-shadow:0 4px 16px rgba(0,0,80,.15); }
+.card.active { box-shadow:0 4px 16px rgba(0,0,80,.15); border-color:var(--navy); }
 .card-name { font-size:16px; font-weight:700; margin-bottom:12px; }
 .health-bar-track { height:8px; background:var(--gray-bg); border-radius:4px; margin-bottom:8px; overflow:hidden; }
 .health-bar-fill { height:100%; border-radius:4px; transition:width .4s ease; }
-.card-score { font-size:28px; font-weight:700; text-align:center; margin:8px 0; }
+.card-score { font-size:28px; font-weight:700; text-align:center; margin:8px 0; position:relative; display:flex; justify-content:center; align-items:baseline; gap:4px; }
+.card-footer { text-align:center; margin-top:8px; }
 .badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; color:var(--white); }
 .badge-healthy { background:var(--green); }
 .badge-monitor { background:var(--amber); }
 .badge-action { background:var(--red); }
 .badge-unknown { background:var(--gray-light); color:var(--navy); }
-.card-footer { text-align:center; margin-top:8px; }
-/* Partner detail */
-.detail { display:none; background:var(--white); border:1px solid var(--gray-border); border-radius:12px; margin-top:-8px; margin-bottom:20px; padding:24px; animation:fadeIn .25s ease; }
-.detail.open { display:block; }
-@keyframes fadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+/* Delta indicator (month-over-month) */
+.delta { font-size:11px; font-weight:700; align-self:flex-start; margin-top:4px; line-height:1; }
+.delta.up { color:var(--green); }
+.delta.down { color:var(--red); }
+.delta-detail { font-size:14px; margin-left:6px; vertical-align:super; line-height:1; }
+/* Row-level detail panel (sits in-flow between card rows) */
+.row-detail { display:none; background:var(--white); border:1px solid var(--gray-border); border-radius:12px; padding:24px; animation:fadeIn .25s ease; }
+.row-detail.open { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
 .detail-grid { display:grid; grid-template-columns:1fr 1.5fr 1fr; gap:24px; }
 @media(max-width:900px) { .detail-grid { grid-template-columns:1fr; } }
 .detail-section h3 { font-size:13px; font-weight:600; color:var(--gray-text); margin-bottom:8px; text-transform:uppercase; letter-spacing:.5px; }
-.detail-composite { font-size:42px; font-weight:700; }
+.detail-composite { font-size:42px; font-weight:700; display:inline-block; line-height:1; }
 .dim-row { margin-bottom:10px; }
 .dim-label { font-size:12px; color:var(--navy); margin-bottom:3px; }
 .dim-bar-track { height:14px; background:var(--gray-bg); border-radius:3px; position:relative; overflow:hidden; }
@@ -69,13 +78,14 @@ h2.section-title { font-size:20px; font-weight:700; margin:32px 0 16px; color:va
 .qual-box { margin-bottom:12px; padding:12px; border-radius:8px; border-left:4px solid; background:var(--gray-bg); }
 .qual-box h4 { font-size:12px; font-weight:700; margin-bottom:6px; }
 .qual-box ul { list-style:none; padding:0; }
-.qual-box ul li { font-size:12px; color:var(--navy); padding:2px 0; }
+.qual-box ul li { font-size:12px; color:var(--navy); padding:3px 0; line-height:1.4; }
 .qual-box ul li::before { content:"\2022 "; color:var(--gray-text); }
 .qual-box.working { border-left-color:var(--green); }
 .qual-box.attention { border-left-color:var(--red); }
 .qual-box.escalation-active { border-left-color:var(--red); background:rgba(239,68,68,.08); }
 .qual-box.escalation-none { border-left-color:var(--gray-light); }
 .qual-placeholder { font-size:12px; color:var(--gray-text); font-style:italic; }
+.region-tag { display:inline-block; font-size:10px; font-weight:700; color:var(--navy); background:var(--gray-bg); padding:1px 6px; border-radius:3px; margin-right:6px; letter-spacing:.3px; }
 /* Tabs */
 .tabs { display:flex; gap:4px; margin-bottom:16px; flex-wrap:wrap; }
 .tab { padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; background:var(--gray-bg); color:var(--gray-text); border:none; transition:all .15s; }
@@ -88,26 +98,29 @@ h2.section-title { font-size:20px; font-weight:700; margin:32px 0 16px; color:va
 .trend-bar { width:100%; min-width:18px; max-width:40px; border-radius:3px 3px 0 0; }
 .trend-month { font-size:10px; color:var(--gray-text); margin-top:4px; }
 .trend-note { font-size:11px; color:var(--gray-text); font-style:italic; margin-top:8px; }
-.footer { background:var(--navy); color:rgba(255,255,255,.7); text-align:center; padding:14px; font-size:11px; margin-top:48px; }
+.footer { background:var(--navy); color:rgba(255,255,255,.7); text-align:center; padding:14px; font-size:11px; flex-shrink:0; }
 </style>
 </head>
 <body>
 <div class="header">
   <div class="header-left">Global Commerce &middot; Partner Health Summary</div>
-  <div class="header-center">April 2026</div>
-  <div class="header-right">WPP Media</div>
+  <div class="header-right">
+    <span>April 2026</span>
+    <span class="divider">|</span>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA70AAAEZCAYAAABbz0J9AAAACXBIWXMAAC4jAAAuIwF4pT92AAAgAElEQVR4nO3d75WjOPr//c/cZ5+3N4JmI5jaCJaNYGsjGCaCqYlgmQi2OoKhI/hWRzB0BFMdwdIR/Koi0P1A5hhkSQbMP8vv1zk63WVsEAJsLpAufjDGCAAAAACAFP1/W1cAAAAAAIClEPQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWQS9AAAAAIBkEfQCAAAAAJJF0AsAAAAASBZBLwAAAAAgWX/ZugIAAAAAdu1B0qOkXNJB0o/H198lvUpqJNWSXiS9rV474IIfjDFb1wEAAAC4R/mxzK0+lmsVkp50CnKH+CyplA2EgV3gTi8AAACwjVzSfxaad33FZzNJlaR/TPjsT8fySTZgBjbHmF4AAAAArVy2y/KUgLfrl+N8DtdWCLgWQS8AAAAAyQa8f0j6MNP8fpS940zgi00R9AIAAADIZBNRza0NfIHNEPQCAAAAqDTfHV7Xj7LJrYBNEPQCAAAA963Q9WN4L3kS3ZyxEYJeAAAA4L6tkWX5w0rLAc4Q9AIAAAD3K9O45/Beo1hpOUAPQS8AAABwvx5XXNZHSQ8rLg+QRNALAAAA3LO1g1CCXqyOoBcAAAC4X1niywMIegEAAAAA6frL1hUAACBRD5KeI9OfJb2sVJd7dZB99mjoMSmvIpssACSPoBcAgGUcFH/u5cOxNKvU5j69aPlnjwIAdo7uzct5klQfS6lpD+POZX+w6+O/+Qz1wrwOstu31nXb+kH2bkSt9be1uw7FxPnkOu2vlaYnqpjj2LkHhU7t9Kxp7XQ4fradTzFDvTDcB9ljhn18GaUIeIEh6sSXB+gHY8zWdUhRJekn57VvskHB28B5PEr6P8/r/9btd4crZJMYVLr9OxyvOn+23TeNC/geZH8APjiv/yzbRks6HJftrsNnjQuAQvvrPzXux63W+Unq2PZs5cfSaPl2XNuzpF+c195lj6uh3zEH2bZx97tPmtbd81Gnfbme8PkU5ZL+GPC+sccbLgt9J7m+igvK2FYp6T8LzPe347yHGHq8zOWvGv5bBcyCO73ze9B5wCvZoKIYMZ/QOLDY+LBb8Czpd9kv+Ffddga/Qv6HuU/Z1m7g0b6+tEL+dfhJ4wLNOfbXR/nvyoxtT+kUbPxHdn8rR35+zzKdB7yS3YfKEfMp5d/vftH447KUPWH6j2y75yM/f+9+EkHvnNqeMwCGeZG9cLqGLyLgxQYIeucXe8B3PmI+H0e+fiu6J+sfdNsnetnEaa5Q97sPWr7bY2x/HfOw+tB+6QuoQ2JBdjZiPtL5ncp85Of3LItMG9vDYMoyfHLn72Lk52EvzvDsyuu1iat8F3QAhK3Vi7BaaTlAD0Hv/JrINK5sSd+dv5stKrEza11d9WkmThtqq3V73Wi5t2TJ76NmwXmnrBbje6/1rHEX2wBYpZb/zf6q2x+ihxtF0Du/WBeRqvP/g04Je150fmfkc2AeoddvRaFT+3zRbV/xqwZOc7e1ewc1NJ+vWv5CSWjZ7+r/MHUTHlU6v7P3ZeD8c50SdpXqn+CH6uJOu9Sekq3r1+P/v+v2HknSTWz2rP6d11rnF49alfN3oVNyscKZFjrxeFf/okGm/rb33Y186tTpq/zd2h87dXkSwZ1Pm9gK0zzJP7wIwGWNlh8KdGu/xUiJMYYyreTGmCdjTOaZ9miMeTN9hfOeV3Ou6kw/GGNqZ3p9fH3rdY+VB2NMGWiXoeVwbK/iBta3MP1t/Wb62/pg/Nu6dN7z4kx/Daz7gwnvd9esQ9fbcTnt9Myc789mwHrWzjo8eebhrufU9nyeuO5z7K9zl0fP+rnb5MEY01xog8ozn8p5z7MzvfEsx7ftH0euk7scY8L7eEol96z3EFP353suD5Na2n5PbV13yn2X0iyjnFifaqH6FBPrQ6HMUsjePE03c+q77N0rtzvlQac7Iq/q37F7kvTfwLz/7szr4TivN88y9sbN/jc103Q3I/LUzL1rim3rUuGsjH9TvxvopW09ZL+bKtPpbqK7DpX8d0/edX63LrQOmaT/BZbtZgueqz0vKWTHUbbGZppeSiP/GOkvOr+rnXc+03Rej2XidI/LTKdtXzvvfZH0L888vmv4uN9M4W3/q24/OV9MrmHZm31SyNS/llAm8iHI3oytldo+e7Or0ry9JtZ4GgUQ9ZetK3Cjis7/P8ieYLrBx5vCJ9B5ZN7uvPYe6Ha53VYKjT9py9Ufj/Xj8bV6Yp3WMHVbZ+oHKpe2ddH5f2i/m6pROGAMJbT6oPNtE6pPFlm2e1Fjans+aHzQ29V2md5SpnBSMF/wWQfeG7tQ9KD+cdko3G6+ZUq2ju3FjUvyyLRHpR30XqPSvBe2UlaLxFXAnArZ73ffkwLGeNe0c0FgdozpncY90Rs77jL2/ltOdnVtu0j+k+9bbpM5zdG+UzSRaWtvm9STLzWRaVskBZtjmU1kGsd22AfZwJexz3EkrgKW8STbA+rbxM9/lr2QS8CLXeBO7zRPOj0S4av8XTZy9bsedt9TKdxd1O12WDifa0bUc22l7F2kj7LdH0vPe3Kd2uVNdp26J76NbJectqvPJ+3/Tkeh053MRufb2vdIIjdZ0OE4n/YEt9L5tu7ud980b1ehQv0urnVn2ov8J5Xfdd6FuTj+3922tew6++7GVM7fucLHTqi77btT56HtWevUnqVnvlv4Kv8+45445OofS907ppXC3eXc+RSKb3vfd5WbZC1TeNu/KrztY3V59Uy/Nz/KtmWot8W9K3T9nSgAYbXseV0ue7w9Kt6r4ptOCRibJSsGjLb1oOJEiy9py8uF97gJe3wJZNxkNrdWCk+73Hoym8qzTtWF9/iSEm25rS8lhvIlVWsmrIPvPZfaash73oxNGNROzzzLMWZ88qWtSmbOk1TV5jzhl8uXFMxVdKaHkoJdes+r6Sf+CiXect/jbpMpibdureSedZriaQfrsrcSSrI2Vr2DdaHcdynNMsqF6vtgTslcS2O/33Nz2+dylDsoJLKa34OkPwPT3IH8mexVszfZOxrdOye1/Hd7bjXpRizRyDXJFraUK5ykxk2K1F4pbY6vd7f1HMmCpoolVfMl2mrHEdc6v0M/JPnS4fj34TiP7p3iXOH2dJP67LU95/Qou561+vtSpnBiKPdYynT6vqjV356lhicFy3Uav107723k3/af1e+pEtv2hfpJxbr2kmBsilzTE1m5brkd5tbuQ3N0a77V31Sko9T+ElkByaF78/xi3dBy9YPeRuEkLr6AN/b63j0o3CUmX7Eec8ovTKs7f78q3E17jmRBU8X2VzfJUGwdhiZfaru++uSRurjJl6a250Pkc3vzIn/33izymdz5u9G09s7UD3pr+QOudjiDj7tvxbZ9FqlLHlj2vXmRbSfGQdv9iHG8AIDBSGQ1P05IMNYWCYpaKe6vW7bnvUlx/9mrDyL4l2zvlNCFLQAAvLjTO78XhbuL1s7fbffF9nPdO1ChZDZfr6ncwrrJg8Yks6mdv3P1u2S60/eiVrhLUu38Xeh0N6tS/y7a0GRBSwh1BW6ndRUKr0Nof/3s/J3p1OW10XmSqqHt2T123LqE2tNNvBXbX7c29ViKJbuq1W/HSsOTrD3qdJexW5dGtl19d3vdumQKb/tawxNv3bMfZXtfPG1dkY3kCv++AgAQtvWg4kRLYc5Vznsqz3uKzvTMnCezaUw/OUz3vfnG6+xLKuLW15fMpnbm40sC5rbd2iXWvqWnvqXzntrznu629iULWjOR1aV9cUj9Hsz5/joksdKQ97gJj+ZoT9/+upekaqFjyW2npZKCddsyM+fbdUpb+rbrpeR+xqlLt+TG/124t5J71mkOoXZJuWRmnsRVrnoH60a571KaZZQ7WDcKZTeFRFbLyXS6q+HexS0UTtrSTSDTvcPS6DzZlTuv77J3v7a4W1XLf9fITWSU6ZTMxn0kSSwJ2FZJXEqd7kB9k73T4LZvm+BJOt/WoURR7zofn1covq2X1K5Dm1St6UyrFL5zmnX+dvfXypnWaFgis0zhY2dM4q32bnCj8/ZsNCz50hYaDatbpn5iqLozLdfwJGu5Tvu1u+2HJgXrbnv3uM4UTrzlJvfrHkuVzh950X5vtO3zq8J5EfYg13yJrLrej/O+lfHpc3jVMuN4SWSFrZUikRWwOILebcS6lI49iXtTP5DY6ksutiP9MHAepcJf/HtZr7Hbp1Y4+ditZGNtFE5W9HcNO/HOFT75H3PSWev69swUDsLedXq27xYyhesmrX8sxY7rv2rYhZlC4Yt8YwMO96LH1tvrklzLBL3Sthc511bJf+FtDgS92Fopgl5gcSSyAnCNPQUc2QzzCGUYX8stBTBDt/0trdMt+ahwNuyUFFou4AUA3AmC3uVksnclSp0S7rRiiVm609pkNqVOSW1c3YQm37XdSVAowdYX5+9Mp3ZxH2kSa5d6SqVm8Fvn/9/kb98H2fUpNXxbu8mCJNsepcLbekntOjzpPHisA5/57kxz99euNvmSjzv/TOPb0zefUHs2snX38SXeavfXPLLsubwpXLfYsZQ70+rIMtxpucLb3l1m67v6XY+72949rmM9Adzt2T2W3LpI9vjrtk8Zmfc9+JfSboMH7bv7OgDgVmw9qDjRUphzlfOeyvOeojM9M/7EQJlneZm53URWQ5LZuG23xbqF2rf01PfJeY+bVMmYNBJZddskhURWjacul5JFLbW/XTqWhtTNt10vvWfNRFa1UxcSWU3XPRZTKQdzvu8twd0PKZS1S2mWUe5g3SiU3RTG9M4vU3hM3r/Vv7PRfeyKm7Cn1rDEUHsSe8xKLJGRO0421208sihXeLyeO9a1UPhxP5XCjyzKp1ZuoELjk6r5Eh7VCj+yqOj8nSn82JoxicwKjW9PN/lSplMiqEb9ZFex/dVNvrSENY6lQv5t7yZZi9VFGpd4q/3bTXaVK3wsuQnKbkmu5cb0dr3rlLQtFbHcF3NiTC+2VooxvcDiCHrnF8suOyYz7ByJofYk1zyJjPak1PLJgpbe1rETyzHB3Z4SmbnJ3bqGBlC59ru/5tpPUrDYhYoxSaZK7S+J3RxyrRP0Snb4hTsc4FaVWiYI8Nn6eAZKEfQCi2NM7/xiJ3l7SvqD25BtuOwU99cU1wmQ7ON8qq0rMYNHrRfwAgDuxF+2rkCCXhT+wXaTtmQ6XWF2nyP6Vf67MG7CqMNxHpnsnZmtn9uYH0ut/p2iNpGR7w5c7fydqd8ls5mnapPE2rdWeFvXzt8Px/k0x2ndbf1F4WehNoNrOk3sTq8vyVAu/zp8l7+LayjBmU+tcHs2I+bzonD3Zvf4yOXfX2PLqyPT5pTr+rplCh9LtcJ3emPL6HpVeNu7+0/sWIotr3b+ju2H9+4n2Taptq3GZJlut+5rymXbKpM9HtqLeQf1n2X8Tafjo+mUV21/rrAnmWw7PujUrtKw9nzt/Ivb1m7/9ph6cKZ1z1+7+8Kb7PZv/30Vv0v7tPWg4kSLLyHLpYRNbgIZX3KYIQlkqo3W2Zc8aK5ERt12WbMMad/KU99L7xmyHddMZOVLtNVNHnUw58mjmoXWYUh7XiqZpy7G2ERq3fo2zvTajN9flyiZOd8mU+rme0/Rme47Zt33DCmPnnm8mX6iqdycbxM3Qdkcx9LeSu5ZpzXsuU1CJbQ/Lq2eWN81y6Oxx8vc7VMbm+zoFveXa0pmbMLJF+P/rZji7Ti/woxPslfOVAdXObIe91byYxvVUxs4ojH296owy58zUAYWxvQuJ9cp4dSr+levc/nHebnJSDLZMcAPnXk0nfc38t9h2WIcR61hiYxynZIHtevUXhHLFE4CNnSM4VzGJDIqZNervcrnThuTLKjd/pXWvcNdqH/3rO5MK+W/A+tLDFXIrkOt84RH7XKeZdv1q+y+4HtPLn97tmqd9jff2ONL7dn9fFdsf60DdZlbrWnHUjeBVabwseSOa346zutV/sRx2fG1j7L7bfte9z3F8V/3uJ56LNXq3y0O5UsYM3Z4bbnWG9Pb9V1237+luw2Vtnke717H9Bayx/caybwkexxVx5LiXcv2N6FQ/+7tUr7q1J6XlNrXmN5a4V5A19jDGOPHTgnl/ljCF9nfs2rFZcK1ddR9p6UyYcXAeeSRedQbrFPM0HmUkXmUK6/PXO1bR+aTr7xOU0sTWYexdwjcq+ru452GlMKZx9vIz2eR9Rk7r7nLYaa6lZH5lCPrVDmfd3utXCq+O8FT5lVH5pOPrNNaJY/UeWl1pF57K8VCbTDEntopM/aO7lx3H6d6Ndv1sFqiTat5m2eUxtjv3NjdvnKhZZeRZcZKvbP6pHJcGWPrcGl/oCxUSGS1jdhdiWytSgAzGHuHzb2yOuUOnfuZOa/Wrnnl1yfWHlvVza3TnHdV93qHNgX/0PZ3VYZ4UPixafcik70D9D9Jv2j776EfZbdJo+FPnNibTKc23aIHQeuj7F3cV+33cZOpyrSv40qydfiP7LFVit/AVRH0bqOOTAslD3IfRdEmhvJpplTqSt8Dr/sSGeU6JeLoqiPzb0bW51qx5dXO322CnlznX2Due4cuY22Zxq/Du2daaH9tfXI+Xw2sX1el/r7/OfC+ti6583qj8P76xfNaO49sSOWu1GieusW6JzbjqtTrNi2N32axuoSSXeU63w/nXKd78R/t+0T7oPN94J4ctI/ALOSjbPBb63Yeh3WQ/c7aW5t+lPR/sm1JoLOsvR9X0in45WLImra+1XzHxZeQoupM9yUPqs3lRDVvZptuE6FkNm6yo8Z5z5BkNvUG6yPjT0jmSxbU7TLjJiQLJWcpN1onX3H3I3e7ZcbfLchdz0v7a3dfeTLjk310y+E4j8fAdHc/crfbXPvrEmXJY6maWKfMXJfwZsljqfuevZXcU9+17TnZV73geg9Vm23W/cnso7vlGM9m390ycxMfjrMXb6b/21UutJzSTGvHpY7LqfVJ/bgyxv427/nYSqJsXoE7Lu1Je21OGf+60yvjVznvy4+v1cf5+Q6awpy+BKaetHeDmsb4T6IeOnV5NudBTRNYJ3fdi2Ob+NqlLe1JtHtiPKZ0A4c60HaPx3r42jcLrI9x1r27rSuzr/GHeaD+7sWTzNg2D61D7Z/NKkGiW8pAXWrPuof214MJ/3CGAu05y5zHUm3ix9JaZa5jqTT7PJZ8JY+s15rcCwx7KL4LIVuozbrrnZl9BPtTvZp9XkTZy/40RmFs3cuF5l+aaW251P45tT73cFwZY4+tzGx/LCVbyN68X7EN88OI+Rwk/T/ntb9rfHZGN3PqN43r7pQrnMV0bPbMR9luQq2p2Vtf1M+M+Ul2PYcqFc64uIcshUNUCnf/8WVFDgntr1tk1m3kz2ounWcuDskV3l+/aNvuSLn2W7epSoWPpV913sX6VuTaJnuzj5v9e0vud/iW1sze/Cj7nbqHsYXXeJfdl/bQNb3tIr9EtuE1fJb9TSJ783SFTk+FuHWhJyRgBozpTV/meW2O5EG++a7FXfbUL7o9rdNWsonThtriRygU8ErzrNOex2PtuW5TpbhOW/hJ4y7qLeVB9/nYjlI20E/hxPyD7LoUG9ejfTzerQa80n6Oy1v1LDvuPIXjSrLrUet2xtDfFILebXWTtrhCyWx8r7cJe3wnh6+yd2Vb75p2Bal2/q4C78vkT6zTRObtm5YrfPX9Rf1ERr5kWUPUzt9V4H2h9m0i83antdt6b19ksSv1oSRDvnUI7a/fAq8vyZfwSfIn3so0fn9d6wpspnnqlms/zyGdciy567TXY+kW/FfbtlubYCaVE9ShKi1zJ29rv2u7wLcNeNd45u7S7u14mMNBdvv/snE9ltAGvtm21UjQ1v2r77gUpj9msDH9cTKhZ1t2xxP6Erv4xlC2Y0pDY36Hlgdjx2QUgWXUTl0q5z2+MTdvpj+G4cHEk9m0JYvUZUx5PM4nD6xv49TXXZ4vsc6r857Cme5u6y1LKDnQpW1Xm8uJoYzZZsyluw+1utvOt7+6x05of116bORcdXs058fSGuORQ9ukcepSOO/x7Ye1857Smb7X8YVtyT3rtLU19uFQqVZYv7HcfWzOEvp+TY17LC9dQt/x6CvNtPatd1afez2u9piL4aYLY3q3kcs/zutd9srOW+d9T7JXtBrZbhzdux6v8l/lHDMWcy6V/GND3XGyhU5Xhl9lu3y165sdX/Nd9Rw6FnNOjfxdZf+t013Qg+z65ce/X2Tbol2n0Ni179rPVTx3HSr1959S/rsU7li4XPH9dU0Px7pkstviWf27vLX8XeLcMUeFwvvrUtyx5q0xdcvkP5beZdumub6agx2OdfEdS//Uabv4jqXuWN7QsTQ2v8Cacu1nTG/XmuNYW25eiL1Yqi3aO1Ep3IkcYq3zjvb3hbujl6U4pjeT/W24l+NqT7kYbh5B7zYqXZ886EHSn4FpW5zQzJHIKHZStHZiqFzzJAsKBTBS/4R/z0IXV6RtLkZcy5fcrbX1xYi56lZqP0nWYkmLxvyg1wqfiO31WMq1z6BXGp+47xq59tsOS/1e1rrtsaZTTEmSOca9XUi4VmpB771e8OjeaMEVGNO7jWzitK5bSe4y5svpVtZpTD1vZZ1isonT9iqLTIslwVpDbH/Zum5TxdYpW6sSOPOL1rmD0GbXvSeV7i/glWywtORv3rMIeO9Ve8Hj3gJeye73KZxLbo6gdxtTkgddk0RpTrn8J6rvntckf4KjTP4r601kub4upQ+Buswh1oW18bz2IH8XS997hyxjC6H2rCOfCSUZ2ssXdK7zurwqvL/6Em9lWq/nRKN56tZcWMaaYnd+fNOmHEuxaQh71vJdw2vd14lqqXBPrtR90HIXOJ50v+167+79Dv9HkeF7FgS926jkDwa/qn8S+Czb1fGP47/d8W2NbPc017uWeaZlKRuk/SHpfzq/ohs6ILuvt19c/zvO5039Ow2V/Cf239Tv8l0cP/tnpy5zn7i9yna9dL2r3z2nHR/557E0Tl1K+YOYz9rPc9ge1W/PVw1bh990CtwPiu+vaytlu9y3dXnR+P01U3x/Xcqax9Ialj6WPomgd6oPsvvDUhep7u3OXK40szSP8Q/Nf4Ke6Taee49l3Nv3iE+bLwVXYEzvdtogITv+Xav/pf4sfyr2WGKot+M83GDqsfOZSuNPegvZRxO43LFQ3eX4kgeFxobGEkM1x7/b4CqXf2zYlLGYB51O+NzltEqnLqVOJ9iZhiULyo6fa+tXaz8/4KGx4W57PsjWuf3SrdTfj0L769rjR6Xw2HB3/OjU/XWN8aNz1O0g2/Zt4Fgf57NVD4NS046lTKc6P+iUoEya9n22plz7HcvaNSZPwVCF/L8bezPXmN72d+Se7mqHuMfttWrdZ3fxa6UyprfQbXyXLG2L86mkEPTu15v8P55jEkNJ/h/isckmQifY0vBERqHgShp3wlUp3MVpbDDyon6SqV817u5kKLiaMq+tVAq355jkCXMkMptLo/D4179q2IlYrnkSmS0h137rNlWp8B2yWzmWfHLdRtArzdvOD7qdbs1zBb3u78kavsq2cy37vdb9Xc+OpR0ukGvdvABzZZ0tRMAzVSpBrxT/jbgXW5xPJeUvW1cAQaGThbEnEQ+ez4w9aLIL05oB84gtc0x9LtVlDHe5jxp30jfXOm0pi0x70PXjs7Y46Y2d2LUn49fY87bdc92mSnGd9ui/skFTfeV82h40txDwzuVR6wW832V/pypdzj3RqL89c9kgco2xsT+p35tjirZHHFDKnq8sve++q/89+Kr+owDb8qD1u1x/kD1+q5WXmwyC3v36Lv/Ju28scEztzOtd43+EaoV/0IfeMY4tMzbNt7zQFcgxd69986pGfr6ZOG1PaoXbsx4xn3f5T3LH7q9z+Krr1+nSyeSW9ly3qVJcp1v0ouu7pVa6r/F3awVm77K9i6or5lHrNLym0vJdhktdd7f3SdtfPGnvpjfyfxcddLqTThfsZRVaJtj8LvvdV2nceeRB9oJXofW2/aMIeicjkdV+lQNeb6+om2N5k/8HJpftVvLp+P9mZF1CP+if1D85enbq0q1ro3Aym+782ztx7Xwa9ZPZPMufzMZNAjbEk2yXvk/yPx/54KlLt+voi8LJgq69Q7qWWHvWnb8L2W3atkWl/h24MjD/p8DrSwrtr7953hfaX19luwq73ORLS5mjbu6xVGv5TGPb6bUAACAASURBVL0hl46lSv4LJG7ircfjZ0P7Ia7zQdfd6S21fhffrT1p+W7DX2QvRlQzza+RPRf4dab5hfyk6U9YOGi7jLVfZc8J/irbTqVs29ee8qJTvoIfZIcF+b6fMY9c811M/yq7vTLZfW3sOeSb7H6Ryw6vW+Mi/7/Eb950xhjKfsujMebVWK/Hv7vTa+Pnvm/osmpjzIsx5sEzPe8srzHGlM7050Bd3PeVx88bz7IOxpg3zzzejDFZ530Px89263Lw1Lk81rkKTL9U2rZ35U6dq2Md365Y1pbFbc9nZx0eA+3w4synMPH9tbus2pzvG2NKYeL7q3vsPDnTQ/tr930HE99flypD6qYLdYsdS1P2z2ezzLHk1rky4WMpD8yjnlCftUqozntXmftZ12v2n9BxNqfyivoNKQ8Lr8PzxHqVC9YppDb93/drSmZOv6tbmbrv1Durz9z7bGOmnScP+T5YY5svUfe7KJtXgDK5PJgwNxgZO6+3CfUJaUbM4ykyH/eEf+y8xrZJHqlLNXJet17qSFtkI+fVOJ/PJ9TH3TZj9rG2hEyZ19xljrrNeSyVzuerkZ93t9fUecVOJta4GDGlxNZ97wozfD0zs3zwt5TaTN++7rExtzHb4JqyZOA75XxC5vy3YklvZrlAIjfrrktXObCObql3Vh9fCV2Mv8S9qL9EqSbWbcw6rPG9kFyhe/PtmjOJUu78PecYmjHdvpZcpzm7g2QzzusWxMaqZCPn5e4P+cjP+z4ztmthbJlrZjf1iXU/3suxlI38fGydxswrhcRxt+RZw7vDv2j7sZdrW7r77W9ab+zeq5Z7BvkHjc8o/6j1vou/yn4PLTUkqZY9jr4uNP979SLbBX2od9kuyE9a/rF9T/IPfZtLvuC8k0bQe7uayLSxB7T7ZT9lXIJvXOjYeTWRadeuU2zeY5c3dl63LvZj3Vw5r3rk56Xr99fYMpf8oRriVfMcS7H9d+1jqY5MGzOvOdfp1oX2kTl9kN32ly4oVFoncdUa6zzGo5YL9L9o/edxvsifd2MOY4PeYolKeHyWDSCW/v54Oy5nqfa9V5WGtek32Qsb9YJ16XrTshfE7ilR4KwIevet1Clpi3sQNQonS+gm8jnI/pjFktk0OiVfaH8EXN0EMm86TxYUSh5UOnWpdEqI1Og8MZTvxP5d/SveD7LBQSyZTSWbpOOr7BVz3xdQ6dSl6Ex7lT/Y8yXeutS+e+cmPKrUb89YIrOm83epfnv62vxRdh9rE0jUzvRMl9vz9fjZrxq+v5aeuvu479tCqL277ekmsXtVvx0qDTuWcl0+lp5lj6Exx1L3uI4dS2Xnb3c/fFH/TnD3vV1TktjduledJ2ZbwkfF7zYWWufxN25Csz1Y6qT2XesFfa4nLXNxYUzQe9A6ydDmeo7wGIUIfOdWKH5hfq0LG65ayyY0yxecd7q27l9NCZbS+JWd9xyM7dvfjsXxJQ/yJZBxE0NdKqGxE+64grJTl8acj0eqA/PJO+/JTH/snpugJzP+sUevI9ZHJpwsqNt+bWKd7jKWTBa0RRnano/mNC7pzfgTlPmMGT96MP6xT2Pbc+r+6hvTlRm7D9SB6UuVS3WrA+voHivusZR1pofyAtQj6zrlWKrNsGOpMefJrNrvtDezzvisa0oeaJtrtdtorUQ5pTlft6UTILXa36tyofmP3d9jx84cign1mfu7ZwlDx90XCy2/a+z5wpzlYMKJ/ebmO26HlHpn9ZnaptVCyxtapo47HoJkVhPK5hWgBEvoZGJMUogiMA9jxn351JH5DD3hnCvxVhWZTz5iPiFjfgznTBa0VQkFLMaM+1IN7a/NiHnE9tcx7Rk7oRgbILnzGrOPLVVix1I1Yj5VZD5DT1APkXnMdSwVI+azt5JH1usatTm1/1on0N19P3SBasnllgvNv23LMSX2vbl2XeYu2ULrNvQ7fOkLOXu4KJ2ZdS4YlRPrV++sPlPatFpwWWPKUtt5ybZMttC9eb9CY4XGjCHKItPGdMGNJTIaOp+5ktBkE6d15ZFpY8ZKpJBYJ7b9xuwjof1yTDKSLDJtTHvGtuHYrufuvPKRn19CrC2yEfOJvXdoe8fac65jKRsxn3vzJtu9b43xrt3u5i9aJ9HQr1pvHN4Y+ULzDQ1tWFOjZXIbDP3uzRdYdtcaiYwuabSPbZ2SRqd9Z4uu6yFLDb25lXPMXSHo3a/QScyYk5smMm3MgThHIqO5ktDElheb1lVHpm2VLGgrsf1gzD6yp+RLsRO2sT9Abv3rkZ9fwhrH0lCx9hxz4pzCsbSVJTPvdrWJrZ4VvxA6l8/aZ2CQaZlEMt+1XAbhseoF5jkk6H3QslnAv2o/Y8NLTUsairBXSX/XfgJeablzhlvLHbMLBL37Ffqxd18vdUrYU6t/lXRMYqg2edCbhicy+qL+iXOhU1KcVw1LZuPO3012Val/pydUl2/qf7k8durSaHgiI7cupU7t+6L+F00lf7Dntu+ePcu/Dt/UPwHLFW/PKjB/9/VS17enu78+q7+/unVrfVI/gHrq1MXdX1uPsvt5KPHWUmJ1m3Is+Y7rKjCPS8dSN4HPm4YlBTsc69Ye1ykeS1t6UXg7zOlHSb+ssJxvWjb76TXyhea7pwC/XmCeQy4U5Asst6tceP5jlVtXIEH3ltQQY2zdv5oSLaU5jQfwJQ8KjSvqjsd7MP3xGW4ypsz4xxzUzrIK531uApnQmLxYMpvGDEu81TjL6iZVMsaOAXKn+8Ta782cjznyjS1yk4C57Vub4eMh91Jy02/P2pwnD/JxE0N1k6r59tfKM483E99f3fYcur8+mfP91T22fPaQHGJI3S4dS6Gxnq8mfixVnuk+7rZ1j6XCmV67MzBpHktuyQPtdy13f4+1861x94tLx8W1Qm0ZKpV/NlfzrXNq++2ldVyqbY3ZNnlVqIQS+M2lnFivpb5HptbnlstSx1K9g3W7ufKDMWbruBvTZJL+F5j2RcMfEfCs8JX7f2r4Fd83+bslfdfwMXmFpN8D037V8CvhrwpfVf5h4DweJP0ZmLan8SJreFH4ERJ/1bDup3O1Z6XwI1L+ruFXeUP76zdt321ojroVCh9LP2v43dPQsfSuceN+Q9v+k/Z7R28OuaQ/FpjvV/nvih1kt9ka422XEvrdKSX9Z4HlhdoyJPb7MtWY38k1ZAqfX1zj0jlFreW6zo/53ltTpeUe+/Wbpt1NrrXMdphan1uWa93fAETQvfl2ZZFpYwa4x06i8xHzuZVERvnAeZBY5yT2zMShQdgayZfGJEoJ7a9bP/Q90zx1yyZOG7rMDyPmE9suW19gSM2b7AXPNRJbLWGviau6lviO+KjT86n3UJYIeIdYcqz4XsZLu/ZaLyA5BL23a67kLnMlMgoZc/I11zrNmcjI594S65DIbD1NZNoWScFiy2wGziP2vqHzwHCvus2753tNXNXFRZrljLmwPdY37fd3u966AsC9IOi9XWOS2ZSyX6y1hiez+a7+l3GbPKidT+G8f0hiqEsqDUtmkx3/butSeubj80X9H77Hzjxe1L8LXCscPO/9xGysTOftOWQf+ap+0BJrz1cNa8+p+6ubfClXfH/9HJhPaP5rCh1LlfN3qX57Z857Q8dS985CpmnHktt+heLHUih4Ds0f16m0TmKruew5cVXXkoHZPcgj05a8oFAvOO9rvWmZR0RhuHzBwoWyPdl6UDHlYimMHfxfeKYdTD/hgC+BzJRkNrU5Ty7kUzrLchNrucmDhpQHpy6NGZbIqHLmU5rzB5UPSbyVm3Ht29apPJZswjpvWUKJNOoL7ekmDysC7ekmV5pjfy2curj7ax6oS3d/dRNBudO33iaX6uZON8afGKrpTG/MtGPJPa4r098epWcexvSPJTdJ1ZvxJw3LzO0eS74S2hevVQ9cfh2awY6EEle5JbSfXWtoWy5Zh3vhfo+tcawYs48EhbFSLbTesfbe4ntjan3m+i4ujW3r2iybQGwNY763KMeyeQUo0VKavjLwvoPxZzkNZV415jxTsY7zyDyv+7IYtw7mvC75DOueBeoSylhtAm2Qe+ooE/7C82V4zALzbte3O6+3GdZ9zbKn9iwidSk87w/tr3VgHr5tM9f+ukQJ1S10EcqY84A11k5VZD5zbPsXz3tD275d3+68mkjb3ErJI218jXrg8g+mf+Fjj3z7uK+UCy1/aFsuWYd7UZpw24YuRM9h6D62VVlqv4q1d6zUO6vPlPJwXJ7vQnoKxnxvUY7lL1vfaUZUfuHv1pv8Y1XHJpAJjXcNLbedT+3Upfa+c5wmsryQTOfr4KvLg8YlCwrVxTevD7Lt5VvuHsXas30+a1cdeO8c7ZlF6uKbFtpfQ8lQfNtmrv11CaG6jU0KFmon33tjy/DVJVd42/sSoDWRZbrH0kfd1rG0R21iq1rh7bSlW0hchfnUkWlLdh2PLXcPmq0rkIiD7FCbQtsnpcQOMaZ335oLf4/9/NR5xZI/jZnPHGLLG5qoIrY+YxMZNQNf26tm4rShtkhkNkfypVs1pg3naG+Opf3ba2KrL7q9/AiMz8MSmq0rcOPaXCCNpP+KgBcBBL379qRTsqov8p+4dJMHVerfvXlROOioOv8/yJ58tPNxl1PJz01ktIYq8Lov8ValU2Id97nFQxMZFQonVZLs+v8s287fj/9vAvPeoyrweizh0Zj2dE9qC82/vxaR93Ztsb9OleuUiOtF/ZPtWsMSQ7lJwUr1999QwHHpWMo7094UTqhXBV4PaXTbx9KeVdpXYqtvus1nnZPICtiXJ9nfif9on71ZsCdb96+mXFVKc+5SMhs3edDB+Mc8VM6y3LGftfGP78uP9cqvWK+DseN7ngLLKMz52D838ZZvnKG73rUz3U285Rvv+hao0y2XudrTHfs9tD0v7a9uMqwpyZdC++seS+FZP2POt0n3uB2TFCy27V89y/Fxt33tTPclsWuP69KkkaRqSMkD7XetemJ93O20hTcTHtcdK+VC9RnTlntov1sWO+6X2r4mssy9lKW+J8qJ9VlqP59aH1/JFqznLZj6G3DX5QdjzNZxN6Y5SPp/gWmfdX4VPT/+WzuvP8l2B/H5u/rdFw+yd30a+e/AlLJX21r/1rQHr7/q1D3l+3GZblfMQ+d1t4vli/zjCd91fqU+02ks8Jvz+v8C9fukfXYXvMbc7dmov49kCrfnmP31WdIvgfm4+2uoLnv3Jv8V6686H1//ILsN3P23kPR7YP4/6/yOcGjbd4/FrjHHUqvWabz1u07fJSnLJf2xwHx9+8IQ7b7ycdbajDP1d6FU//dlLmPaslY4ZwAu+yEyrdQy2/fScvcg1zLfE7/p/DF0Q9RaZj+fWh9XLvsdcs93dqf+Btw1ujffrksJnVy1/Mkc3G6qsWltYp0m8P7c+XtKYJirf5L9Uf51beviG1PoC9CkUyKjruY4H/ckPYvUMcVxXbH2zAOfibVn47yeRZbtm1YrnIRs6HxCddmzWJI130nIq8bvv+602LYPjY364JlPE6hLq1v/D4p/92AZbWKrMWPt5/SbpgW8exEbw464sWP8AZ9C9gLBPQe8mIig93bNlfSnmTjNx63T2M+HPjN2XZdOZDRX29+KJjJt7bZIve1jJ9VbBCqxZY7dFu68mpGfxzy2Smz1RfPc5dlS6t8/S2o2XHa+4bKHyLeuwI0oFO7BBFxE0Hu7XmWTgfhUzt+FTklxntTvlui+t+VLZNQmD6rk/5IudQo4v2raiVWjUzIbyd4ZcAOBw3He9bGOhTO9CszbTWSU65Sg51n9O1e1hiULSsGl9gzdmfmq/rbpJjyqtEx7ht77rv0/lmKooYmhHnU6rksNO64vTRv63q8aHwA86XRcf9Jt3/G7dZXWTWx1q4mrMJ9Ld8mXvItOArLb9yACXlxr60HFlKuKm/THmPMEMpU550tm0+UmGsnM5URGa5VQ4q1L6/1q+omMHj3zcNd7SPveehmayMzXntlC7Xkwdt8qjD/5VOnMozHTEuPstfi2yYvTFr6kYO4+Xpj+cetLdiVjt+OT6ScM69bFTVBWm3gSu8wz7V5LbpZRz1S/eqH6dU1NXOWWcqH6jWnLYqE63IPCbHOsGDNvAqUlylLH4dT13lt9Dub83OHezfUbcFeFRFZpyI//Njq/kxlKjhBKZiOd3zGrJP3kmYcvmc3SSoWTXfxN58mTMvkT9ISSBX3R+VjD/Phvo/S6ZI5JZJbpdPe2dt7byJ8cx5dsof27kb89u8mTvsk/jjdWl1S0Sarc/TdTOCmYmyike1z7Ekxlx9fbY8GXVCxWl1ap/nH5T6W7XcbIta9EVq41EltNTVzlKrV9Iqtcy2zPe+D+nrgeJP250LL3nvQndD5yrVQSWVXyn4Pes73v07v0l60rgFnUgdfzyGfcQKJNZuMTSjjTJjIKfW4JeWSamw22kT+oiiUL8iXBqi/W6nbFkgnl6p+kNAoH/aGTZt8PZ31hmd3kST/Kv4/F6pKK0AliFvlM7vwdO64lG+B2j4Wf5A96L3U9dJf7eGG52Ic2sVWt5U66U+rGvlQX3PcF570XW3Zv/odOF+32JnY+AvvbQsCLWRD0pm3OZFehLK63mMioiUzbKqvpVhqFr+hucYLQeF7b44lKKhrn73vb/3FKbDX3eLkUEle53mSPkSWClHyBed6a71qu18Gj9pmPI9+6AjtXbl0BpIOg9/blsl/mmU4JhNog4UXhrqvu1fdCpy/fSv27NC/yB73ftf7V6ReFnxlbd/4+6LROjWyiquY47U22a4gv2HPbJVe4fVNQKdx1vdsWbntW6m/7UHt+HlmfRvbuUNuN8ZPSvwPik+nU3rXs/tvud68Kn3hXzt/tPKTT/uu+v5Dddu+antW3TYT2QbZLejlxPthGJXvHKfQM7LFSTlxVK/xYvKnaR3ildFd8ikb3F/QWW1dgxzKt+1zsb7L74JznHJm4U70fWw8qplxVCnPuUjIbY2zSmu58hiSGcpPZNGa75EFuEp83Y5NgtNMzzzob00/Uk3nWuzbnbedy2zeF4mvPYkB7dt/jS77ktidlWMk97e1LCua+p3LmU5lz7nsoy2/LJdQL1beeoW5zJa5ySzlD3XzGtuVS9ahG1iPFslTbtrIdrGO3PCy7ujefyMqXsHFujQknzZyj5AvVu16ovkkXHll0uw6yd39cPzqvV7JXmv59LH9zpj/Jfxf3F/XHDj7KJqL4VTZJTabt7sA9ya7Hz5261J3pz/LfBeuudyN7Z+Ofsuv0d9k7Yu3dtEz+7n4/aptnXC6p257/ll33qjO91OX2fFO8PTFcpfP2/qD+3dNXnY7rn2Xbu+hMz+W/uvyT6E6HsEfFn3M+RKG0e2csdTf2J8XH69+DpfebcuH5j5XaucTcYjlH5vCbTuc7S52rZAvNFxPQvfl2xZIfZM7fbwr/UMe+VB7VD2xetZ+TmUbhrkqhrmcfZdutuw61/Al3ssiy88i0W9Uo3J554HVfIrNaJDC6RqZw9z53v44d13lkGbnYRvC7NrFVaomrfGLDC65V6r67u9YLz/8n2XOaPZzHPIhurzGZls0q7z7BZCnZCsvAQNzpRYp34kjGM6/YPpLi/rOlWHuyX2MNbWKrsVJMXBWy5N1e98kK9+RNdlzlkqqF5z+Ur6ceTpY8Dj5pvf3gno/n3eFO7+2qFc50WDt/5zrd+XlV/wc7lBhKOk9k1CZ0kuwXRjOkogspdKrLi/pXbl/kv4LqJt7KZNepfZRBpWnJglJQqP/c27ozbWgiszbZla89McyYJGuZTneFGvX3yxeFn2laT6wb7kelcY8KSTlxlU/oN2YOle77RDn0ezOXdgjYll2LS62boOkWLXkMrHnB4Z6P5f3ZelAx5ariS2ZTO+8pzbnKeU/leU/Rme5LUvRm+omh1iz1xPpeSgTUmH6ii8LzHrftUihTt/+l9nwz+0sccgvlwdh9scuXoM415D1uEjvKsiX3bIM51CvV35fk0LVU4iq3lKNaaLipbelL7jeXamKd1ioPC9Zx6eROrWKh+l8qj2us3FE5sY71DupTLVSHekQd9rwvr7keyRTu9N62NplNIXt3rVb/Ls6D/Hd7flL/8SWF7JWvR53GCTad9z/r/Mrrh+Pra4/fepL/CunvsuvU6JRU6fH4byNbz+5dxxed38X9qP6Yquo4z/ZusHtHOQWF/Hcs5mjPdh9ZOhlFal51au9M570zYknsis60SnYbFvIf18Aluew+Exu/Wii978UhKs33iCeX+xu9J086PQqx1vx1fNWyz+tttYkqq4WX0/Ww8vJuWbbQfNf8riJR2c4Q9N6+N4W7asSCDbfLRSxJVR54/aPWT4oTW6dM/ZP6F/mD8kzhH9Sf1O+m1yjtsTdjEpmF2lMannwJw7Tdw31iSezcbdbofsZZYn5vshdZcO5ZywW90jZBWUwmW5fuRef2wvfcw1gqhYdnzOl3hS8izq1Q+MkSWM9aQ64ykahsd0hkdb9SPJHJtq4AAOAuNJI+L7yM37V90HuQvXD2P533snIfpTaXaoF5hvxXNnBf8pzoWXZbEvBuL1tpOSnfLLlZBL1pqyLTaufvXPbHq9T5l4L73tb3yLSlVJFptfN3Ibs+T+r/oDUKP4ty6ZOYvYl1T3enPcrfnpJNvuTzZVq17l6bFKzUeYKgNsmaj7vNHnQ6rkmoAcyrXGEZP+k05GFthezvZeyu6y+a/zF+jdb9Lf7XcZnFzPPNj/NdskcAxlnjOCpEL7ddIuhNw0H+H51G9llkrs/qB4+VpD9kf9j+I3tFt+hMf9L5YwTetc1YzUr+H8OfderafJA9Sfhddn3+e5zW/bJ71Hng8E3+MRiZ0nw2rzSuPf9P4fZ80nl7fhdjWqZox023++/vsu3fXmh4k79dv6p/dbmU9KdOx/WfoqszMKdG6wRnP8oev5WWv1PV3tltNPzu5BJ3taoF5hnzQXZ9G/kv7I5RyF6E/0PLj03GOD9q2WPoQdzl3a0fjDFb1wHXKXQa+/NNNjhzxyy0SXGk82RX3c+7/qb+GNlC9stiD0lx2qRK0vnjkyqFH1mUdf5u76Yd5E/OJA1r3xSs1Z647FX+R3Z8Vv9iVNb52012lcuecPn8Uzy2aC25wtvhGl+V7oW4kFLLjPO8ti0z2eNvza6rnxXPsTDWQfY34FHT71D9qvlP9mtt+2ifL8c6vCr+nZnL/n7mx7KXbsy/adqFzlrLtPuY+pRablz3Fy1z0+ZBtu3W2P73+BtwNRJZ3b7uj4ybvbUVS1IVO/Bznd8R3ovYD35onT6qn+wqlgSs1b0gEGrfFMTaMw+8/lH2S77dt4a0J+IyhZ9R6e7XjcInEHlkGbkIeoG5NLLfe2skXmr9dCzvst/bteK/865M9ru7DdTmCHBKzf9s9lLLXDQa6l86vwjwTad15Fm7y1nygvm/ZM/lqhnnWYhEZbtH0JueOZMxpJjsKsV12hLtOa/YDz0/psA+lbIXpUIXrJbyQacAuPWucPCbabnutu0j6ooZ51nL3tXeUxbctbfxvRp6AWequTJ3Z8d5MIb3BjCm9/aVnf+/y3/lKpP9IXrS+ViGMYmMbkWo3t91/kXaJmfKA5/55Hy+uqJee/Ygu38UGp7I7N0zrW3PLcZ7p+BN4SRrblKwbrIrNzlHHVlGbBqAaYqtK3D0QfYOpK8sPb70J83f5bJUOHEf0lWvsIz/HpeTT/hsJns++D8R8N4Mgt7b9yzp77Lj9DKdj7MtZA/K32UP8P+pf2Wrkj/z7q+eed2KUueBw7v6JyVtsqA2OdMf6icLaj3p1L4PSnOM6rNskpT/6pQ0qehM9yUyk87Hl3aTXf2f/O2Jy3xJ1t7VT17lJrtqk9y0avkT7HwWQS+whFfZ3817V808v0Yk4LtXoadCzOkfOp3/lbIBsO+8JdPpKSevsufSe+qBgAFIZJW2TPbA9HGT2RQ63eGrdfsnxt2kStJ5cqZa/vE4brKg1D3KBqiud52Slkm059oyndrtTf2xcm2iMF9355/VP+ksdDqu3WRXWF4uElnNpdQ+E1m5KnEyPDWBUkwtxtCOdcuJrCR7ofe/C9QjBff4G3A1xvSm7VKSqrrzd7VkRTYQS6qUKfyFfm/dcovA6x9k26I6/n0pSVWoPX+KLANhjcInBw8Kj+8ttN/kc8A9eJI9Ru957OeTzi+MXutR4Yt9SFMlgl7MiO7NaYt1Lc3WqsSN4Qf1hK7JADDOm+xFZd+QkHvRJrWa05vu76L0vXvTOs/Bxp0g6E1brCtj7fyd6fSMuVSCne5z87oaDU8WlLp6xLRQe0rh9lxjTE6qcp2e/9jVRD5TO38flN5xDewdga9N7pPPPM9adggH7ke5dQWQDoLetL3Kf5Xsm/rdHp9kx/7+cSyNbn+swItscp92nV7Vv7v95PnMu+7vC7aS/8Tsk/qZriv127NRPxgrPPNwky9hmINs27dt/afsyV4btDbyJ8z5pv7dleL43u42K+auLAAvAt/zC3ZzqGTHhuI+NOo/RQOYjKA3fYXsldEvx/Kz+j9Euc7HTHyQDRpv9c5QqfMU8j+qH+i/yGZl/ix7N/KTbLss/Wy4vWlPzH6VbYfPkv6tfrBa6jwxy0edZwv+m2w73nN7zuFF5+MB/6H+BZln2WR07f77q+x2bJNdZbKZnbvd9T8cX8vmrS6AgHsNfN9lf0fm7uLcKpVet9cvomdUSKlwbzJgMBJZ3YdK4YQ2ReB1N5HRLSkCr/9D/cc6uY/muVdtkqrQCUpoHNWP6ge2jbize62DwknBCvXbt1a4e3oRWUah++vRAGylDXyfdR9Znb/JfscsfcGzkP3NWSKj99raNiO7vl87nvvPrSuC28adXmQTp+3Zx8i0bK1KJCSLTLvV3gB7FWtPkqwBt+lNNqhJ/Tm+a/fwKXX7Y3y/qd9LjauQ2QAABfhJREFUB36vut1t/U100d4Fgl7Erize6lXHUDKqd93+84e3UAdefxfdl+fWyLarz5iub83EaQCW8yw7rCa17s7fZYdbbNHTpzouO/S9uWcEvONUur3At32eLtt4Bwh6Ucn/A/xZtxvQlPL/ANL1dppS4fbki3x+hee1sUnBKvmDZDeJHYB1vcreDU0hGdO77Hpk2vaCcn2swy2Nif0igqEpKt1O4PtJbONdIei9D4XsQfem87F87Xij32R/ML7KfqEUa1VuAe1JRZvk54vsleDKed+D7I+lUT877j16lt0XGp1v+6HtmYn2nMOLbPu2iU0+y99l8EF2exn5x2PnOiUoa5NdLZFNFcB4pWzyv1t9TF77vVRuXI9WNynj3u/6/iY7RpVgaJpKNlHaXrdzm8iNGy0784MxZus6YFkHSf/Pee3vut27uHN6UT/L8yfd55dULvtIm9a7pgWsbnt+1m1fPNm7N/XH+f4s7uLuTa7+sTWXtsvcPSm1TNKiPbRlLrt+oSR2e/JZtq7NttWIOmificO+yp5jhM6/as27D/ymaRcl5q5Ha2p9QjLZ37w9HTef5e8FV2re7689fG/dHO70pi/zvMYdOMtth2yLSuxA5vw9NWES7bkudztlW1QCwNVq2RPY9jFke/Mue1H4bzplTd6zNnHY37SP9vwue1EyFzcc5tTItunP2v6RRl9lbygV4g7+bhH0pu9V/TG7JB86qZ2/qw3qsAe1+t2EpiZZqZ2/l3pGI6zu+LV33e/+C6Silj1p/qtsN92tE159kQ0oDrJ3r5pNazNeo1Pw+5vWD4y+ybZfJr6fl1TJtvEWwe9n2WA3F+fWu0f35vtwkP3iP8h+OTQb1mVvCp3GotYb1mNrmU5XKCtNv1JZHOf1qtvN/n0rusf1i/jB3aNMy3Txb3R/J9G5lunO12jfbZnJjv/M1R8+soR32e+S+vhvinesHnVqz9jjDaf6Ltt2lcZ/Jxeat8dOrWnnNXPXo1VrnfOsXHYdHrXMo/6+yG7jMcdIrnm/vxrt+3trlwh6AQAAbkMum0DqQTYwedC0E/vvsifOr8dS6/4uiLftmMu25ZSxoV9l263Wfbbh3j3IBr/tth57oaM9TmqdjpMULwbdBYJeAACA2/agYfk6GhGYxRw0LMv9qwh+blWmy3ey30TvqeQQ9AIAAAAAkkUiKwAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsgh6AQAAAADJIugFAAAAACSLoBcAAAAAkCyCXgAAAABAsv5/9oiUV7/U5gYAAAAASUVORK5CYII=" alt="WPP Media" class="wordmark-img">
+  </div>
 </div>
 <div class="container">
-  <h2 class="section-title">Portfolio Overview</h2>
-  <div class="card-grid" id="cardGrid"></div>
-  <div id="details"></div>
+  <h2 class="section-title">Partner Overview</h2>
+  <div class="card-rows" id="cardRows"></div>
 </div>
 <div class="footer">
   Global Commerce &middot; Partner Health Summary &middot;
   Confidential — Internal Use Only &middot; April 2026
 </div>
 <script>
-const D = {"monthLabel": "April 2026", "partners": ["Amazon", "Criteo", "Incremental", "Pacvue", "Shalion", "Skai"], "regions": ["NA", "EMEA", "APAC", "LATAM"], "dimensions": [{"key": "relationship_health", "label": "Relationship Health"}, {"key": "product_performance", "label": "Product Performance"}, {"key": "support_responsiveness", "label": "Support & Responsiveness"}, {"key": "commercial_value", "label": "Commercial Value"}, {"key": "innovation_roadmap", "label": "Innovation & Roadmap"}, {"key": "team_adoption", "label": "Client & Team Adoption"}], "scoring": {"Amazon": {"composite": 7.21, "status": "Healthy", "dimensions": {"relationship_health": 7.5, "product_performance": 7.7, "support_responsiveness": 6.7, "commercial_value": 6.95, "innovation_roadmap": 6.0, "team_adoption": 7.55}}, "Criteo": {"composite": 7.68, "status": "Healthy", "dimensions": {"relationship_health": 7.95, "product_performance": 7.55, "support_responsiveness": 6.95, "commercial_value": 8.55, "innovation_roadmap": 7.0, "team_adoption": 7.85}}, "Incremental": {"composite": 4.45, "status": "Action Required", "dimensions": {"relationship_health": 4.1, "product_performance": 5.0, "support_responsiveness": 4.0, "commercial_value": 5.1, "innovation_roadmap": 4.0, "team_adoption": 4.1}}, "Pacvue": {"composite": 7.13, "status": "Healthy", "dimensions": {"relationship_health": 6.85, "product_performance": 7.55, "support_responsiveness": 7.8, "commercial_value": 6.8, "innovation_roadmap": 6.55, "team_adoption": 6.85}}, "Shalion": {"composite": 5.96, "status": "Monitor", "dimensions": {"relationship_health": 5.85, "product_performance": 6.55, "support_responsiveness": 5.55, "commercial_value": 5.8, "innovation_roadmap": 4.85, "team_adoption": 6.4}}, "Skai": {"composite": 7.45, "status": "Healthy", "dimensions": {"relationship_health": 7.55, "product_performance": 7.85, "support_responsiveness": 6.85, "commercial_value": 7.55, "innovation_roadmap": 6.85, "team_adoption": 7.55}}}, "regional": {"Amazon": {"NA": 7.333333333333333, "EMEA": 6.666666666666667, "APAC": 6.333333333333333, "LATAM": 7.0}, "Criteo": {"NA": 7.833333333333333, "EMEA": 7.5, "APAC": 7.166666666666667, "LATAM": 7.333333333333333}, "Incremental": {"NA": 4.333333333333333, "EMEA": 4.833333333333333, "APAC": 3.8333333333333335, "LATAM": 3.3333333333333335}, "Pacvue": {"NA": 7.333333333333333, "EMEA": 7.0, "APAC": 6.666666666666667, "LATAM": 6.333333333333333}, "Shalion": {"NA": 6.166666666666667, "EMEA": 5.666666666666667, "APAC": 5.5, "LATAM": 5.0}, "Skai": {"NA": 7.666666666666667, "EMEA": 7.166666666666667, "APAC": 7.166666666666667, "LATAM": 6.666666666666667}}, "responses": {"Amazon": {"working": ["Strong account team and QBR quality", "Good executive relationship and roadmap visibility", "APAC team responsive and proactive", "Growing LATAM presence and team"], "attention": ["Reporting latency needs improvement", "SLA response times inconsistent across markets", "Limited retailer coverage in SEA markets", "Mexico coverage needs improvement"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 7.0, 6.0, 8.0], "working": "Strong account team and QBR quality", "attention": "Reporting latency needs improvement", "escalation": ""}, "EMEA": {"scores": [7.0, 7.0, 6.0, 7.0, 6.0, 7.0], "working": "Good executive relationship and roadmap visibility", "attention": "SLA response times inconsistent across markets", "escalation": ""}, "APAC": {"scores": [6.0, 7.0, 6.0, 6.0, 6.0, 7.0], "working": "APAC team responsive and proactive", "attention": "Limited retailer coverage in SEA markets", "escalation": ""}, "LATAM": {"scores": [7.0, 8.0, 7.0, 7.0, 6.0, 7.0], "working": "Growing LATAM presence and team", "attention": "Mexico coverage needs improvement", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.333333333333333}], "EMEA": [{"month": "Apr", "score": 6.666666666666667}], "APAC": [{"month": "Apr", "score": 6.333333333333333}], "LATAM": [{"month": "Apr", "score": 7.0}]}}, "Criteo": {"working": ["Commerce Max adoption strong across key clients", "Strong EMEA agency team and support", "Good API integrations and tech support", "Good relationship with LATAM lead"], "attention": ["Fee structure post-2026 still undefined", "Limited retail coverage outside UK and France", "Coverage gaps in Japan and Korea", "Limited Spanish language support"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 9.0, 7.0, 8.0], "working": "Commerce Max adoption strong across key clients", "attention": "Fee structure post-2026 still undefined", "escalation": ""}, "EMEA": {"scores": [8.0, 7.0, 7.0, 8.0, 7.0, 8.0], "working": "Strong EMEA agency team and support", "attention": "Limited retail coverage outside UK and France", "escalation": ""}, "APAC": {"scores": [7.0, 7.0, 6.0, 8.0, 7.0, 8.0], "working": "Good API integrations and tech support", "attention": "Coverage gaps in Japan and Korea", "escalation": ""}, "LATAM": {"scores": [8.0, 7.0, 7.0, 8.0, 7.0, 7.0], "working": "Good relationship with LATAM lead", "attention": "Limited Spanish language support", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.833333333333333}], "EMEA": [{"month": "Apr", "score": 7.5}], "APAC": [{"month": "Apr", "score": 7.166666666666667}], "LATAM": [{"month": "Apr", "score": 7.333333333333333}]}}, "Incremental": {"working": ["NA team managing transition carefully", "UK team remains engaged despite situation", "Some product capability still useful in APAC", "Some historical data access still useful"], "attention": ["No clear path to re-engagement", "US contract situation causing confusion in EMEA", "No clarity on global contract status", "Urgent \u2014 escalating to global team"], "escalation": ["Contract not renewed \u2014 partner going direct to clients", "Partner approaching LATAM clients directly"], "byRegion": {"NA": {"scores": [4.0, 5.0, 4.0, 5.0, 4.0, 4.0], "working": "NA team managing transition carefully", "attention": "No clear path to re-engagement", "escalation": "Contract not renewed \u2014 partner going direct to clients"}, "EMEA": {"scores": [5.0, 5.0, 4.0, 6.0, 4.0, 5.0], "working": "UK team remains engaged despite situation", "attention": "US contract situation causing confusion in EMEA", "escalation": ""}, "APAC": {"scores": [4.0, 4.0, 3.0, 5.0, 3.0, 4.0], "working": "Some product capability still useful in APAC", "attention": "No clarity on global contract status", "escalation": ""}, "LATAM": {"scores": [3.0, 4.0, 3.0, 4.0, 3.0, 3.0], "working": "Some historical data access still useful", "attention": "Urgent \u2014 escalating to global team", "escalation": "Partner approaching LATAM clients directly"}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 4.333333333333333}], "EMEA": [{"month": "Apr", "score": 4.833333333333333}], "APAC": [{"month": "Apr", "score": 3.8333333333333335}], "LATAM": [{"month": "Apr", "score": 3.3333333333333335}]}}, "Pacvue": {"working": ["Bid automation working well for key accounts", "Good onboarding and client support", "Good platform stability overall", "Responsive support for LATAM onboarding"], "attention": ["Dashboard reporting needs improvement", "Feature parity vs NA is lacking", "No dedicated APAC support team", "Limited Spanish language documentation"], "escalation": [], "byRegion": {"NA": {"scores": [7.0, 8.0, 8.0, 7.0, 7.0, 7.0], "working": "Bid automation working well for key accounts", "attention": "Dashboard reporting needs improvement", "escalation": ""}, "EMEA": {"scores": [7.0, 7.0, 8.0, 7.0, 6.0, 7.0], "working": "Good onboarding and client support", "attention": "Feature parity vs NA is lacking", "escalation": ""}, "APAC": {"scores": [7.0, 7.0, 7.0, 6.0, 6.0, 7.0], "working": "Good platform stability overall", "attention": "No dedicated APAC support team", "escalation": ""}, "LATAM": {"scores": [6.0, 7.0, 7.0, 6.0, 6.0, 6.0], "working": "Responsive support for LATAM onboarding", "attention": "Limited Spanish language documentation", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.333333333333333}], "EMEA": [{"month": "Apr", "score": 7.0}], "APAC": [{"month": "Apr", "score": 6.666666666666667}], "LATAM": [{"month": "Apr", "score": 6.333333333333333}]}}, "Shalion": {"working": ["Digital shelf coverage solid in NA", "Good retailer coverage in UK", "Reasonable digital shelf coverage in AU", "Some coverage in BR market"], "attention": ["Alert latency too slow for priority clients", "Pricing model needs review for EMEA", "No dedicated APAC support", "Pricing transparency lacking for LATAM"], "escalation": [], "byRegion": {"NA": {"scores": [6.0, 7.0, 6.0, 6.0, 5.0, 7.0], "working": "Digital shelf coverage solid in NA", "attention": "Alert latency too slow for priority clients", "escalation": ""}, "EMEA": {"scores": [6.0, 6.0, 5.0, 6.0, 5.0, 6.0], "working": "Good retailer coverage in UK", "attention": "Pricing model needs review for EMEA", "escalation": ""}, "APAC": {"scores": [6.0, 6.0, 5.0, 5.0, 5.0, 6.0], "working": "Reasonable digital shelf coverage in AU", "attention": "No dedicated APAC support", "escalation": ""}, "LATAM": {"scores": [5.0, 6.0, 5.0, 5.0, 4.0, 5.0], "working": "Some coverage in BR market", "attention": "Pricing transparency lacking for LATAM", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 6.166666666666667}], "EMEA": [{"month": "Apr", "score": 5.666666666666667}], "APAC": [{"month": "Apr", "score": 5.5}], "LATAM": [{"month": "Apr", "score": 5.0}]}}, "Skai": {"working": ["Cross-channel reporting excellent", "Solid product roadmap visibility", "Strong bid management tools", "Good client success engagement"], "attention": ["Limited LATAM support coverage", "Support tickets slow to resolve", "APAC documentation very limited", "No LATAM-specific reporting available"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 8.0, 7.0, 8.0], "working": "Cross-channel reporting excellent", "attention": "Limited LATAM support coverage", "escalation": ""}, "EMEA": {"scores": [7.0, 8.0, 7.0, 7.0, 7.0, 7.0], "working": "Solid product roadmap visibility", "attention": "Support tickets slow to resolve", "escalation": ""}, "APAC": {"scores": [7.0, 8.0, 7.0, 7.0, 7.0, 7.0], "working": "Strong bid management tools", "attention": "APAC documentation very limited", "escalation": ""}, "LATAM": {"scores": [7.0, 7.0, 6.0, 7.0, 6.0, 7.0], "working": "Good client success engagement", "attention": "No LATAM-specific reporting available", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.666666666666667}], "EMEA": [{"month": "Apr", "score": 7.166666666666667}], "APAC": [{"month": "Apr", "score": 7.166666666666667}], "LATAM": [{"month": "Apr", "score": 6.666666666666667}]}}}};
+const D = {"monthLabel": "April 2026", "partners": ["Amazon", "Criteo", "Incremental", "Pacvue", "Shalion", "Skai"], "regions": ["NA", "EMEA", "APAC", "LATAM"], "dimensions": [{"key": "relationship_health", "label": "Relationship Health"}, {"key": "product_performance", "label": "Product Performance"}, {"key": "support_responsiveness", "label": "Support & Responsiveness"}, {"key": "commercial_value", "label": "Commercial Value"}, {"key": "innovation_roadmap", "label": "Innovation & Roadmap"}, {"key": "team_adoption", "label": "Client & Team Adoption"}], "scoring": {"Amazon": {"composite": 7.21, "status": "Healthy", "dimensions": {"relationship_health": 7.5, "product_performance": 7.7, "support_responsiveness": 6.7, "commercial_value": 6.95, "innovation_roadmap": 6.0, "team_adoption": 7.55}}, "Criteo": {"composite": 7.68, "status": "Healthy", "dimensions": {"relationship_health": 7.95, "product_performance": 7.55, "support_responsiveness": 6.95, "commercial_value": 8.55, "innovation_roadmap": 7.0, "team_adoption": 7.85}}, "Incremental": {"composite": 4.45, "status": "Action Required", "dimensions": {"relationship_health": 4.1, "product_performance": 5.0, "support_responsiveness": 4.0, "commercial_value": 5.1, "innovation_roadmap": 4.0, "team_adoption": 4.1}}, "Pacvue": {"composite": 7.13, "status": "Healthy", "dimensions": {"relationship_health": 6.85, "product_performance": 7.55, "support_responsiveness": 7.8, "commercial_value": 6.8, "innovation_roadmap": 6.55, "team_adoption": 6.85}}, "Shalion": {"composite": 5.96, "status": "Monitor", "dimensions": {"relationship_health": 5.85, "product_performance": 6.55, "support_responsiveness": 5.55, "commercial_value": 5.8, "innovation_roadmap": 4.85, "team_adoption": 6.4}}, "Skai": {"composite": 7.45, "status": "Healthy", "dimensions": {"relationship_health": 7.55, "product_performance": 7.85, "support_responsiveness": 6.85, "commercial_value": 7.55, "innovation_roadmap": 6.85, "team_adoption": 7.55}}}, "regional": {"Amazon": {"NA": 7.333333333333333, "EMEA": 6.666666666666667, "APAC": 6.333333333333333, "LATAM": 7.0}, "Criteo": {"NA": 7.833333333333333, "EMEA": 7.5, "APAC": 7.166666666666667, "LATAM": 7.333333333333333}, "Incremental": {"NA": 4.333333333333333, "EMEA": 4.833333333333333, "APAC": 3.8333333333333335, "LATAM": 3.3333333333333335}, "Pacvue": {"NA": 7.333333333333333, "EMEA": 7.0, "APAC": 6.666666666666667, "LATAM": 6.333333333333333}, "Shalion": {"NA": 6.166666666666667, "EMEA": 5.666666666666667, "APAC": 5.5, "LATAM": 5.0}, "Skai": {"NA": 7.666666666666667, "EMEA": 7.166666666666667, "APAC": 7.166666666666667, "LATAM": 6.666666666666667}}, "responses": {"Amazon": {"working": ["Strong account team and QBR quality", "Good executive relationship and roadmap visibility", "APAC team responsive and proactive", "Growing LATAM presence and team"], "attention": ["Reporting latency needs improvement", "SLA response times inconsistent across markets", "Limited retailer coverage in SEA markets", "Mexico coverage needs improvement"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 7.0, 6.0, 8.0], "working": "Strong account team and QBR quality", "attention": "Reporting latency needs improvement", "escalation": ""}, "EMEA": {"scores": [7.0, 7.0, 6.0, 7.0, 6.0, 7.0], "working": "Good executive relationship and roadmap visibility", "attention": "SLA response times inconsistent across markets", "escalation": ""}, "APAC": {"scores": [6.0, 7.0, 6.0, 6.0, 6.0, 7.0], "working": "APAC team responsive and proactive", "attention": "Limited retailer coverage in SEA markets", "escalation": ""}, "LATAM": {"scores": [7.0, 8.0, 7.0, 7.0, 6.0, 7.0], "working": "Growing LATAM presence and team", "attention": "Mexico coverage needs improvement", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.333333333333333}], "EMEA": [{"month": "Apr", "score": 6.666666666666667}], "APAC": [{"month": "Apr", "score": 6.333333333333333}], "LATAM": [{"month": "Apr", "score": 7.0}]}, "prevComposite": null}, "Criteo": {"working": ["Commerce Max adoption strong across key clients", "Strong EMEA agency team and support", "Good API integrations and tech support", "Good relationship with LATAM lead"], "attention": ["Fee structure post-2026 still undefined", "Limited retail coverage outside UK and France", "Coverage gaps in Japan and Korea", "Limited Spanish language support"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 9.0, 7.0, 8.0], "working": "Commerce Max adoption strong across key clients", "attention": "Fee structure post-2026 still undefined", "escalation": ""}, "EMEA": {"scores": [8.0, 7.0, 7.0, 8.0, 7.0, 8.0], "working": "Strong EMEA agency team and support", "attention": "Limited retail coverage outside UK and France", "escalation": ""}, "APAC": {"scores": [7.0, 7.0, 6.0, 8.0, 7.0, 8.0], "working": "Good API integrations and tech support", "attention": "Coverage gaps in Japan and Korea", "escalation": ""}, "LATAM": {"scores": [8.0, 7.0, 7.0, 8.0, 7.0, 7.0], "working": "Good relationship with LATAM lead", "attention": "Limited Spanish language support", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.833333333333333}], "EMEA": [{"month": "Apr", "score": 7.5}], "APAC": [{"month": "Apr", "score": 7.166666666666667}], "LATAM": [{"month": "Apr", "score": 7.333333333333333}]}, "prevComposite": null}, "Incremental": {"working": ["NA team managing transition carefully", "UK team remains engaged despite situation", "Some product capability still useful in APAC", "Some historical data access still useful"], "attention": ["No clear path to re-engagement", "US contract situation causing confusion in EMEA", "No clarity on global contract status", "Urgent \u2014 escalating to global team"], "escalation": ["Contract not renewed \u2014 partner going direct to clients", "Partner approaching LATAM clients directly"], "byRegion": {"NA": {"scores": [4.0, 5.0, 4.0, 5.0, 4.0, 4.0], "working": "NA team managing transition carefully", "attention": "No clear path to re-engagement", "escalation": "Contract not renewed \u2014 partner going direct to clients"}, "EMEA": {"scores": [5.0, 5.0, 4.0, 6.0, 4.0, 5.0], "working": "UK team remains engaged despite situation", "attention": "US contract situation causing confusion in EMEA", "escalation": ""}, "APAC": {"scores": [4.0, 4.0, 3.0, 5.0, 3.0, 4.0], "working": "Some product capability still useful in APAC", "attention": "No clarity on global contract status", "escalation": ""}, "LATAM": {"scores": [3.0, 4.0, 3.0, 4.0, 3.0, 3.0], "working": "Some historical data access still useful", "attention": "Urgent \u2014 escalating to global team", "escalation": "Partner approaching LATAM clients directly"}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 4.333333333333333}], "EMEA": [{"month": "Apr", "score": 4.833333333333333}], "APAC": [{"month": "Apr", "score": 3.8333333333333335}], "LATAM": [{"month": "Apr", "score": 3.3333333333333335}]}, "prevComposite": null}, "Pacvue": {"working": ["Bid automation working well for key accounts", "Good onboarding and client support", "Good platform stability overall", "Responsive support for LATAM onboarding"], "attention": ["Dashboard reporting needs improvement", "Feature parity vs NA is lacking", "No dedicated APAC support team", "Limited Spanish language documentation"], "escalation": [], "byRegion": {"NA": {"scores": [7.0, 8.0, 8.0, 7.0, 7.0, 7.0], "working": "Bid automation working well for key accounts", "attention": "Dashboard reporting needs improvement", "escalation": ""}, "EMEA": {"scores": [7.0, 7.0, 8.0, 7.0, 6.0, 7.0], "working": "Good onboarding and client support", "attention": "Feature parity vs NA is lacking", "escalation": ""}, "APAC": {"scores": [7.0, 7.0, 7.0, 6.0, 6.0, 7.0], "working": "Good platform stability overall", "attention": "No dedicated APAC support team", "escalation": ""}, "LATAM": {"scores": [6.0, 7.0, 7.0, 6.0, 6.0, 6.0], "working": "Responsive support for LATAM onboarding", "attention": "Limited Spanish language documentation", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.333333333333333}], "EMEA": [{"month": "Apr", "score": 7.0}], "APAC": [{"month": "Apr", "score": 6.666666666666667}], "LATAM": [{"month": "Apr", "score": 6.333333333333333}]}, "prevComposite": null}, "Shalion": {"working": ["Digital shelf coverage solid in NA", "Good retailer coverage in UK", "Reasonable digital shelf coverage in AU", "Some coverage in BR market"], "attention": ["Alert latency too slow for priority clients", "Pricing model needs review for EMEA", "No dedicated APAC support", "Pricing transparency lacking for LATAM"], "escalation": [], "byRegion": {"NA": {"scores": [6.0, 7.0, 6.0, 6.0, 5.0, 7.0], "working": "Digital shelf coverage solid in NA", "attention": "Alert latency too slow for priority clients", "escalation": ""}, "EMEA": {"scores": [6.0, 6.0, 5.0, 6.0, 5.0, 6.0], "working": "Good retailer coverage in UK", "attention": "Pricing model needs review for EMEA", "escalation": ""}, "APAC": {"scores": [6.0, 6.0, 5.0, 5.0, 5.0, 6.0], "working": "Reasonable digital shelf coverage in AU", "attention": "No dedicated APAC support", "escalation": ""}, "LATAM": {"scores": [5.0, 6.0, 5.0, 5.0, 4.0, 5.0], "working": "Some coverage in BR market", "attention": "Pricing transparency lacking for LATAM", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 6.166666666666667}], "EMEA": [{"month": "Apr", "score": 5.666666666666667}], "APAC": [{"month": "Apr", "score": 5.5}], "LATAM": [{"month": "Apr", "score": 5.0}]}, "prevComposite": null}, "Skai": {"working": ["Cross-channel reporting excellent", "Solid product roadmap visibility", "Strong bid management tools", "Good client success engagement"], "attention": ["Limited LATAM support coverage", "Support tickets slow to resolve", "APAC documentation very limited", "No LATAM-specific reporting available"], "escalation": [], "byRegion": {"NA": {"scores": [8.0, 8.0, 7.0, 8.0, 7.0, 8.0], "working": "Cross-channel reporting excellent", "attention": "Limited LATAM support coverage", "escalation": ""}, "EMEA": {"scores": [7.0, 8.0, 7.0, 7.0, 7.0, 7.0], "working": "Solid product roadmap visibility", "attention": "Support tickets slow to resolve", "escalation": ""}, "APAC": {"scores": [7.0, 8.0, 7.0, 7.0, 7.0, 7.0], "working": "Strong bid management tools", "attention": "APAC documentation very limited", "escalation": ""}, "LATAM": {"scores": [7.0, 7.0, 6.0, 7.0, 6.0, 7.0], "working": "Good client success engagement", "attention": "No LATAM-specific reporting available", "escalation": ""}}, "byRegionHistory": {"NA": [{"month": "Apr", "score": 7.666666666666667}], "EMEA": [{"month": "Apr", "score": 7.166666666666667}], "APAC": [{"month": "Apr", "score": 7.166666666666667}], "LATAM": [{"month": "Apr", "score": 6.666666666666667}]}, "prevComposite": null}}};
+const CARDS_PER_ROW = 3;
 
 function scoreColor(s) {
   if (s == null) return 'var(--gray-light)';
@@ -130,45 +143,72 @@ function statusFromScore(s) {
 }
 function fmtScore(v) { return v == null ? '\u2014' : v.toFixed(1); }
 
+function deltaHTML(current, previous, detail) {
+  if (current == null || previous == null) return '';
+  const diff = current - previous;
+  if (Math.abs(diff) < 0.05) return '';
+  const cls = diff > 0 ? 'up' : 'down';
+  const arrow = diff > 0 ? '\u25B2' : '\u25BC';
+  const cls2 = detail ? 'delta delta-detail ' + cls : 'delta ' + cls;
+  return `<span class="${cls2}">${arrow}${Math.abs(diff).toFixed(1)}</span>`;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
 function buildCards() {
-  const grid = document.getElementById('cardGrid');
-  const details = document.getElementById('details');
-  D.partners.forEach(p => {
-    const sc = D.scoring[p] || {};
-    const composite = sc.composite;
-    const status = sc.status || statusFromScore(composite);
-    const pct = composite != null ? Math.min(composite, 10) / 10 * 100 : 0;
+  const host = document.getElementById('cardRows');
+  const partners = D.partners;
+  for (let rowStart = 0; rowStart < partners.length; rowStart += CARDS_PER_ROW) {
+    const rowIdx = rowStart / CARDS_PER_ROW;
 
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.partner = p;
-    card.innerHTML = `
-      <div class="card-name">${p}</div>
-      <div class="health-bar-track"><div class="health-bar-fill" style="width:${pct}%;background:${scoreColor(composite)}"></div></div>
-      <div class="card-score">${fmtScore(composite)}</div>
-      <div class="card-footer"><span class="badge ${badgeClass(status)}">${status || '\u2014'}</span></div>`;
-    card.onclick = () => toggleDetail(p);
-    grid.appendChild(card);
+    // Row of up to CARDS_PER_ROW cards
+    const row = document.createElement('div');
+    row.className = 'card-row';
+    partners.slice(rowStart, rowStart + CARDS_PER_ROW).forEach(p => {
+      const sc = D.scoring[p] || {};
+      const resp = D.responses[p] || {};
+      const composite = sc.composite;
+      const status = sc.status || statusFromScore(composite);
+      const pct = composite != null ? Math.min(composite, 10) / 10 * 100 : 0;
+      const delta = deltaHTML(composite, resp.prevComposite, false);
 
-    const detail = document.createElement('div');
-    detail.className = 'detail';
-    detail.id = 'detail-' + p;
-    details.appendChild(detail);
-  });
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.partner = p;
+      card.dataset.row = String(rowIdx);
+      card.innerHTML = `
+        <div class="card-name">${escapeHtml(p)}</div>
+        <div class="health-bar-track"><div class="health-bar-fill" style="width:${pct}%;background:${scoreColor(composite)}"></div></div>
+        <div class="card-score"><span>${fmtScore(composite)}</span>${delta}</div>
+        <div class="card-footer"><span class="badge ${badgeClass(status)}">${status || '\u2014'}</span></div>`;
+      card.onclick = () => toggleDetail(p, rowIdx);
+      row.appendChild(card);
+    });
+    host.appendChild(row);
+
+    // Shared row-detail slot (one per row of cards) — pushes later rows down
+    const rowDetail = document.createElement('div');
+    rowDetail.className = 'row-detail';
+    rowDetail.id = 'row-detail-' + rowIdx;
+    host.appendChild(rowDetail);
+  }
 }
 
 let openPartner = null;
-function toggleDetail(p) {
-  const prev = openPartner;
+function toggleDetail(p, rowIdx) {
+  const wasOpen = (openPartner === p);
   document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.detail').forEach(d => d.classList.remove('open'));
-  if (prev === p) { openPartner = null; return; }
+  document.querySelectorAll('.row-detail').forEach(d => { d.classList.remove('open'); d.innerHTML = ''; });
+  if (wasOpen) { openPartner = null; return; }
   openPartner = p;
   document.querySelector(`.card[data-partner="${p}"]`).classList.add('active');
-  const el = document.getElementById('detail-' + p);
-  el.classList.add('open');
-  renderDetail(p, el, 'rollup');
-  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  const host = document.getElementById('row-detail-' + rowIdx);
+  host.classList.add('open');
+  renderDetail(p, host, 'rollup');
+  host.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
 function renderDetail(p, el, view) {
@@ -179,11 +219,10 @@ function renderDetail(p, el, view) {
   const byRegionHistory = resp.byRegionHistory || {};
   const availRegions = D.regions.filter(r => byRegion[r]);
 
-  // Tab bar
   let tabs = '<div class="tabs">';
   tabs += `<button class="tab ${view==='rollup'?'active':''}" onclick="switchTab('${p}','rollup')">Roll-Up</button>`;
   availRegions.forEach(r => {
-    tabs += `<button class="tab ${view===r?'active':''}" onclick="switchTab('${p}','${r}')">${r}</button>`;
+    tabs += `<button class="tab ${view===r?'active':''}" onclick="switchTab('${p}','${r}')">${escapeHtml(r)}</button>`;
   });
   tabs += '</div>';
 
@@ -197,7 +236,11 @@ function renderDetail(p, el, view) {
 }
 
 function switchTab(p, view) {
-  const el = document.getElementById('detail-' + p);
+  // Find whichever row-detail currently holds this partner's detail
+  const activeCard = document.querySelector(`.card[data-partner="${p}"].active`);
+  if (!activeCard) return;
+  const rowIdx = activeCard.dataset.row;
+  const el = document.getElementById('row-detail-' + rowIdx);
   renderDetail(p, el, view);
 }
 
@@ -206,30 +249,62 @@ function renderDimBars(dims) {
     const s = dims ? dims[d.key] : null;
     const pct = s != null ? Math.min(s,10)/10*100 : 0;
     return `<div class="dim-row">
-      <div class="dim-label">${d.label}</div>
+      <div class="dim-label">${escapeHtml(d.label)}</div>
       <div class="dim-bar-track"><div class="dim-bar-fill" style="width:${pct}%;background:${scoreColor(s)}"></div>
         <span class="dim-score">${fmtScore(s)}</span></div></div>`;
   }).join('');
 }
 
-function renderQual(working, attention, escalation) {
+// Build per-bucket tagged lists by walking byRegion entries.
+// Each entry becomes "[REGION] text" so the Roll-Up view shows provenance.
+function aggregateTagged(byRegion) {
+  const out = { working: [], attention: [], escalation: [] };
+  D.regions.forEach(r => {
+    const rd = byRegion[r];
+    if (!rd) return;
+    ['working', 'attention', 'escalation'].forEach(b => {
+      const t = (rd[b] || '').trim();
+      if (t) out[b].push({ region: r, text: t });
+    });
+  });
+  return out;
+}
+
+function renderQualTagged(tagged) {
+  const renderList = items => items.map(it =>
+    `<li><span class="region-tag">${escapeHtml(it.region)}</span>${escapeHtml(it.text)}</li>`
+  ).join('');
   let h = '';
   // Escalation
-  const escList = (escalation||[]).filter(t=>t);
-  if (escList.length) {
-    h += `<div class="qual-box escalation-active"><h4>Escalation Status</h4><ul>${escList.map(t=>'<li>'+t+'</li>').join('')}</ul></div>`;
+  if (tagged.escalation.length) {
+    h += `<div class="qual-box escalation-active"><h4>Escalation Status</h4><ul>${renderList(tagged.escalation)}</ul></div>`;
   } else {
     h += `<div class="qual-box escalation-none"><h4>Escalation Status</h4><div class="qual-placeholder">No active escalations</div></div>`;
   }
   // Working
-  const wrkList = (working||[]).filter(t=>t);
   h += `<div class="qual-box working"><h4>What's Working</h4>`;
-  h += wrkList.length ? `<ul>${wrkList.map(t=>'<li>'+t+'</li>').join('')}</ul>` : '<div class="qual-placeholder">No data</div>';
+  h += tagged.working.length ? `<ul>${renderList(tagged.working)}</ul>` : '<div class="qual-placeholder">No data</div>';
   h += '</div>';
   // Attention
-  const attnList = (attention||[]).filter(t=>t);
   h += `<div class="qual-box attention"><h4>What Needs Attention</h4>`;
-  h += attnList.length ? `<ul>${attnList.map(t=>'<li>'+t+'</li>').join('')}</ul>` : '<div class="qual-placeholder">No data</div>';
+  h += tagged.attention.length ? `<ul>${renderList(tagged.attention)}</ul>` : '<div class="qual-placeholder">No data</div>';
+  h += '</div>';
+  return h;
+}
+
+function renderQualPlain(working, attention, escalation) {
+  const renderList = items => items.map(t => `<li>${escapeHtml(t)}</li>`).join('');
+  const w = (working||[]).filter(t=>t);
+  const a = (attention||[]).filter(t=>t);
+  const e = (escalation||[]).filter(t=>t);
+  let h = '';
+  if (e.length) h += `<div class="qual-box escalation-active"><h4>Escalation Status</h4><ul>${renderList(e)}</ul></div>`;
+  else h += `<div class="qual-box escalation-none"><h4>Escalation Status</h4><div class="qual-placeholder">No active escalations</div></div>`;
+  h += `<div class="qual-box working"><h4>What's Working</h4>`;
+  h += w.length ? `<ul>${renderList(w)}</ul>` : '<div class="qual-placeholder">No data</div>';
+  h += '</div>';
+  h += `<div class="qual-box attention"><h4>What Needs Attention</h4>`;
+  h += a.length ? `<ul>${renderList(a)}</ul>` : '<div class="qual-placeholder">No data</div>';
   h += '</div>';
   return h;
 }
@@ -237,24 +312,26 @@ function renderQual(working, attention, escalation) {
 function renderRollup(p, sc, resp, regional) {
   const composite = sc.composite;
   const status = sc.status || statusFromScore(composite);
+  const delta = deltaHTML(composite, resp.prevComposite, true);
   // Left
   let left = '<div class="detail-section">';
   left += '<h3>Composite Score</h3>';
-  left += `<div class="detail-composite">${fmtScore(composite)}</div>`;
+  left += `<div><span class="detail-composite">${fmtScore(composite)}</span>${delta}</div>`;
   left += `<div style="margin:10px 0"><span class="badge ${badgeClass(status)}">${status||'\u2014'}</span></div>`;
   left += '<h3 style="margin-top:24px">Regional Breakdown</h3>';
   D.regions.forEach(r => {
     const rs = regional[r];
     const pct = rs != null ? Math.min(rs,10)/10*100 : 0;
-    left += `<div class="region-row"><span class="region-name">${r}</span>
+    left += `<div class="region-row"><span class="region-name">${escapeHtml(r)}</span>
       <div class="region-bar-track"><div class="region-bar-fill" style="width:${pct}%;background:${scoreColor(rs)}"></div></div>
       <span class="region-score">${fmtScore(rs)}</span></div>`;
   });
   left += '</div>';
   // Middle
   let mid = '<div class="detail-section"><h3>Dimension Scores</h3>' + renderDimBars(sc.dimensions) + '</div>';
-  // Right
-  let right = '<div class="detail-section">' + renderQual(resp.working, resp.attention, resp.escalation) + '</div>';
+  // Right — tagged qualitative text from byRegion
+  const tagged = aggregateTagged(resp.byRegion || {});
+  let right = '<div class="detail-section">' + renderQualTagged(tagged) + '</div>';
   return left + mid + right;
 }
 
@@ -267,10 +344,9 @@ function renderRegionView(p, region, rd, history) {
   const dims = {};
   D.dimensions.forEach((d,i) => { dims[d.key] = i < scores.length ? scores[i] : null; });
 
-  // Left — composite + trend chart
   let left = '<div class="detail-section">';
   left += '<h3>Composite Score</h3>';
-  left += `<div class="detail-composite">${fmtScore(composite)}</div>`;
+  left += `<div><span class="detail-composite">${fmtScore(composite)}</span></div>`;
   left += `<div style="margin:10px 0"><span class="badge ${badgeClass(status)}">${status||'\u2014'}</span></div>`;
   left += '<h3 style="margin-top:24px">Score Trend</h3>';
   if (history.length) {
@@ -282,7 +358,7 @@ function renderRegionView(p, region, rd, history) {
       left += `<div class="trend-bar-wrap">
         <div class="trend-val">${fmtScore(h.score)}</div>
         <div class="trend-bar" style="height:${barH}px;background:${scoreColor(h.score)}"></div>
-        <div class="trend-month">${h.month}</div></div>`;
+        <div class="trend-month">${escapeHtml(h.month)}</div></div>`;
     });
     left += '</div>';
     if (history.length === 1) left += '<div class="trend-note">More data available next month</div>';
@@ -291,10 +367,8 @@ function renderRegionView(p, region, rd, history) {
   }
   left += '</div>';
 
-  // Middle — dimension bars
   let mid = '<div class="detail-section"><h3>Dimension Scores</h3>' + renderDimBars(dims) + '</div>';
-  // Right — qualitative
-  let right = '<div class="detail-section">' + renderQual(
+  let right = '<div class="detail-section">' + renderQualPlain(
     rd.working ? [rd.working] : [],
     rd.attention ? [rd.attention] : [],
     rd.escalation ? [rd.escalation] : []
