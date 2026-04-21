@@ -284,6 +284,21 @@ code, pre, .mono {
 }
 
 </style>
+<template id="__bundler_thumbnail">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <defs>
+      <linearGradient id="g" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0%" stop-color="#5465FF"/>
+        <stop offset="50%" stop-color="#93DFE3"/>
+        <stop offset="100%" stop-color="#B0F467"/>
+      </linearGradient>
+    </defs>
+    <rect width="200" height="200" fill="#000050"/>
+    <rect x="60" y="60" width="80" height="80" rx="12" fill="url(#g)"/>
+    <rect x="70" y="108" width="60" height="6" rx="3" fill="#000050" opacity=".4"/>
+    <rect x="70" y="118" width="40" height="6" rx="3" fill="#000050" opacity=".25"/>
+  </svg>
+</template>
 <style>
 /* =====================================================================
    Partner Health Dashboard — WPP Media skin
@@ -828,13 +843,34 @@ body {
   color: var(--wpp-white);
 }
 
-/* Detail grid */
+/* Detail grid — three signature light-blue cards */
 .detail-grid {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr 1fr;
-  gap: 36px;
+  gap: 20px;
 }
-@media (max-width: 980px) { .detail-grid { grid-template-columns: 1fr; gap: 28px; } }
+@media (max-width: 980px) { .detail-grid { grid-template-columns: 1fr; gap: 16px; } }
+
+.detail-section {
+  background: var(--wpp-light-blue);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.detail-section::before {
+  /* Tiny tinted rail for brand anchoring — color per column */
+  content: '';
+  position: absolute;
+  left: 0; top: 22px; bottom: 22px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--section-accent, var(--wpp-cornflower));
+  opacity: 0.55;
+}
+.detail-section.sec-regional   { --section-accent: var(--wpp-cornflower); }
+.detail-section.sec-dimensions { --section-accent: var(--wpp-pantone-629); }
+.detail-section.sec-feedback   { --section-accent: var(--wpp-lime); }
 
 .detail-section h3 {
   font-family: var(--font-display);
@@ -843,31 +879,47 @@ body {
   color: var(--fg-2);
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
-  margin: 0 0 14px;
+  margin: 0 0 16px;
+  display: flex; align-items: center; gap: 8px;
 }
-.detail-section h3.spaced { margin-top: 28px; }
+.detail-section h3 .sec-swatch {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--section-accent, var(--wpp-cornflower));
+}
+.detail-section h3.spaced { margin-top: 24px; }
 
 /* Dimension bars */
-.dim-row { margin-bottom: 16px; }
-.dim-row:last-child { margin-bottom: 0; }
+.dim-row {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,80,0.06);
+}
+.dim-row:first-child { padding-top: 2px; }
+.dim-row:last-child  { border-bottom: none; padding-bottom: 2px; }
 .dim-head {
   display: flex; align-items: baseline; justify-content: space-between;
   font-size: 13px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  gap: 12px;
 }
 .dim-head .label {
   color: var(--fg-1);
   font-weight: var(--fw-medium);
+  letter-spacing: 0.005em;
 }
 .dim-head .value {
   font-family: var(--font-display);
-  font-weight: var(--fw-bold);
+  font-size: 16px;
+  font-weight: var(--fw-black);
   color: var(--fg-1);
   font-feature-settings: 'tnum';
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
+.dim-head .value.low { color: var(--score-low-ink); }
 .dim-bar {
-  height: 8px;
-  background: var(--score-track);
+  position: relative;
+  height: 6px;
+  background: rgba(0,0,80,0.08);
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
@@ -876,60 +928,91 @@ body {
   border-radius: var(--radius-pill);
   transition: width var(--dur-slow) var(--ease-emphasis);
 }
+/* Segmented 3-tier backing line for reference (thresholds at 5 and 7) */
+.dim-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%; width: 1px;
+  background: rgba(0,0,80,0.10);
+  pointer-events: none;
+}
+.dim-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 70%; width: 1px;
+  background: rgba(0,0,80,0.10);
+  pointer-events: none;
+}
 
 /* Regional rows */
 .region-row {
   display: flex; align-items: center; gap: 14px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0,0,80,0.06);
 }
-.region-row:last-child { border-bottom: none; }
+.region-row:first-child { padding-top: 4px; }
+.region-row:last-child  { border-bottom: none; padding-bottom: 2px; }
 .region-name {
   font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: var(--fw-bold);
+  font-size: 11px;
+  font-weight: var(--fw-black);
   color: var(--fg-1);
-  letter-spacing: 0.04em;
-  width: 54px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  width: 50px;
+  flex-shrink: 0;
 }
 .region-bar {
   flex: 1;
-  height: 8px;
-  background: var(--score-track);
+  height: 6px;
+  background: rgba(0,0,80,0.08);
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
 .region-bar-fill {
   height: 100%;
   border-radius: var(--radius-pill);
+  transition: width var(--dur-slow) var(--ease-emphasis);
 }
 .region-score {
   font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: var(--fw-bold);
+  font-size: 16px;
+  font-weight: var(--fw-black);
   color: var(--fg-1);
-  width: 32px;
+  width: 34px;
   text-align: right;
   font-feature-settings: 'tnum';
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
-.region-score.missing { color: var(--fg-3); font-weight: var(--fw-medium); }
+.region-score.missing { color: var(--fg-3); font-weight: var(--fw-medium); font-size: 14px; }
+.region-score.low { color: var(--score-low-ink); }
 
-/* Qualitative feedback blocks — light-blue signature cards */
+/* Qualitative feedback — white nested cards on the light-blue section surface */
 .qual-box {
-  background: var(--wpp-light-blue);
+  background: var(--wpp-white);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
-  margin-bottom: 14px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
   position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 .qual-box:last-child { margin-bottom: 0; }
-.qual-box.escalation-active {
-  background: #FFF0F0;
-  border-left: 3px solid var(--score-low-ink);
+/* Top gradient-accent bar instead of left border — feels more like a WPP card */
+.qual-box::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 3px;
+  background: var(--qual-accent, var(--wpp-lime));
 }
-.qual-box.working    { border-left: 3px solid var(--wpp-lime); }
-.qual-box.attention  { border-left: 3px solid var(--wpp-yellow); }
-.qual-box.escalation-none { border-left: 3px solid rgba(0,0,80,0.16); }
+.qual-box.working              { --qual-accent: var(--wpp-lime); }
+.qual-box.attention            { --qual-accent: var(--wpp-yellow); }
+.qual-box.escalation-active    { --qual-accent: var(--score-low-ink); background: #FFF6F6; }
+.qual-box.escalation-none      { --qual-accent: rgba(0,0,80,0.18); }
 
 .qual-box h4 {
   font-family: var(--font-display);
@@ -938,41 +1021,65 @@ body {
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
   color: var(--fg-2);
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   display: flex; align-items: center; gap: 8px;
 }
-.qual-box h4 .swatch { width: 10px; height: 10px; border-radius: 50%; }
-.qual-box.working    h4 .swatch { background: var(--wpp-lime); }
-.qual-box.attention  h4 .swatch { background: var(--wpp-yellow); }
-.qual-box.escalation-active h4 .swatch { background: var(--score-low-ink); }
-.qual-box.escalation-none   h4 .swatch { background: rgba(0,0,80,0.20); }
+.qual-box h4 .swatch { width: 8px; height: 8px; border-radius: 50%; background: var(--qual-accent); }
+.qual-box h4 .count {
+  margin-left: auto;
+  background: var(--wpp-light-blue);
+  color: var(--fg-2);
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  font-weight: var(--fw-bold);
+  font-feature-settings: 'tnum';
+}
+.qual-box.escalation-active h4 .count { background: rgba(184,36,58,0.12); color: var(--score-low-ink); }
 
 .qual-box ul { list-style: none; padding: 0; margin: 0; }
 .qual-box li {
   font-size: 13px;
   color: var(--fg-1);
   line-height: 1.5;
-  padding: 6px 0;
+  padding: 10px 0;
   display: flex; gap: 10px; align-items: flex-start;
 }
 .qual-box li + li { border-top: 1px solid rgba(0,0,80,0.06); }
+.qual-box li:first-child { padding-top: 2px; }
+.qual-box li:last-child  { padding-bottom: 2px; }
+
+/* Region pills — tier-tinted, display type */
 .region-tag {
-  display: inline-block;
-  background: var(--wpp-white);
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--wpp-light-blue);
   color: var(--fg-1);
   border-radius: var(--radius-pill);
-  padding: 2px 8px;
+  padding: 3px 9px 3px 7px;
   font-family: var(--font-display);
   font-size: 10px;
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.05em;
+  font-weight: var(--fw-black);
+  letter-spacing: 0.08em;
   flex-shrink: 0;
   margin-top: 1px;
+  line-height: 1;
 }
+.region-tag::before {
+  content: '';
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--fg-3);
+}
+.region-tag[data-region="NA"]::before    { background: var(--wpp-cornflower); }
+.region-tag[data-region="EMEA"]::before  { background: var(--wpp-teal); }
+.region-tag[data-region="APAC"]::before  { background: var(--wpp-lime); }
+.region-tag[data-region="LATAM"]::before { background: var(--wpp-yellow); }
+
 .qual-placeholder {
   font-size: 13px;
   color: var(--fg-3);
   font-style: italic;
+  padding: 2px 0;
 }
 
 /* Trend chart */
@@ -1329,10 +1436,11 @@ function switchTab(p, view) { renderDetail(p, view); }
 function renderDimBars(dims) {
   return D.dimensions.map(d => {
     const s = dims ? dims[d.key] : null;
+    const tier = scoreTier(s);
     return `<div class="dim-row">
       <div class="dim-head">
         <span class="label">${escapeHtml(d.label)}</span>
-        <span class="value">${fmtScore(s)}</span>
+        <span class="value ${tier === 'low' ? 'low' : ''}">${fmtScore(s)}</span>
       </div>
       <div class="dim-bar"><div class="dim-bar-fill" style="width:${pct(s)}%;background:${scoreColor(s)}"></div></div>
     </div>`;
@@ -1354,18 +1462,19 @@ function aggregateTagged(byRegion) {
 
 function renderQualTagged(tagged) {
   const renderList = items => items.map(it =>
-    `<li><span class="region-tag">${escapeHtml(it.region)}</span><span>${escapeHtml(it.text)}</span></li>`
+    `<li><span class="region-tag" data-region="${escapeHtml(it.region)}">${escapeHtml(it.region)}</span><span>${escapeHtml(it.text)}</span></li>`
   ).join('');
+  const countBadge = n => n ? `<span class="count">${n}</span>` : '';
   let h = '';
   if (tagged.escalation.length) {
-    h += `<div class="qual-box escalation-active"><h4><span class="swatch"></span>Escalation Status</h4><ul>${renderList(tagged.escalation)}</ul></div>`;
+    h += `<div class="qual-box escalation-active"><h4><span class="swatch"></span>Escalation Status${countBadge(tagged.escalation.length)}</h4><ul>${renderList(tagged.escalation)}</ul></div>`;
   } else {
     h += `<div class="qual-box escalation-none"><h4><span class="swatch"></span>Escalation Status</h4><div class="qual-placeholder">No active escalations</div></div>`;
   }
-  h += `<div class="qual-box working"><h4><span class="swatch"></span>What's Working</h4>`;
+  h += `<div class="qual-box working"><h4><span class="swatch"></span>What's Working${countBadge(tagged.working.length)}</h4>`;
   h += tagged.working.length ? `<ul>${renderList(tagged.working)}</ul>` : '<div class="qual-placeholder">No data</div>';
   h += '</div>';
-  h += `<div class="qual-box attention"><h4><span class="swatch"></span>What Needs Attention</h4>`;
+  h += `<div class="qual-box attention"><h4><span class="swatch"></span>What Needs Attention${countBadge(tagged.attention.length)}</h4>`;
   h += tagged.attention.length ? `<ul>${renderList(tagged.attention)}</ul>` : '<div class="qual-placeholder">No data</div>';
   h += '</div>';
   return h;
@@ -1389,24 +1498,22 @@ function renderQualPlain(working, attention, escalation) {
 }
 
 function renderRollup(sc, resp, regional) {
-  // Left: Regional breakdown
-  let left = '<div class="detail-section"><h3>Regional Breakdown</h3>';
+  let left = '<div class="detail-section sec-regional"><h3><span class="sec-swatch"></span>Regional Breakdown</h3>';
   D.regions.forEach(r => {
     const rs = regional[r];
+    const tier = scoreTier(rs);
     left += `<div class="region-row">
       <span class="region-name">${escapeHtml(r)}</span>
       <div class="region-bar"><div class="region-bar-fill" style="width:${pct(rs)}%;background:${scoreColor(rs)}"></div></div>
-      <span class="region-score ${rs == null ? 'missing' : ''}">${fmtScore(rs)}</span>
+      <span class="region-score ${rs == null ? 'missing' : ''} ${tier === 'low' ? 'low' : ''}">${fmtScore(rs)}</span>
     </div>`;
   });
   left += '</div>';
 
-  // Middle: Dimension scores
-  let mid = '<div class="detail-section"><h3>Dimension Scores</h3>' + renderDimBars(sc.dimensions) + '</div>';
+  let mid = '<div class="detail-section sec-dimensions"><h3><span class="sec-swatch"></span>Dimension Scores</h3>' + renderDimBars(sc.dimensions) + '</div>';
 
-  // Right: qualitative feedback
   const tagged = aggregateTagged(resp.byRegion || {});
-  let right = '<div class="detail-section"><h3>Qualitative Feedback</h3>' + renderQualTagged(tagged) + '</div>';
+  let right = '<div class="detail-section sec-feedback"><h3><span class="sec-swatch"></span>Qualitative Feedback</h3>' + renderQualTagged(tagged) + '</div>';
 
   return left + mid + right;
 }
@@ -1418,7 +1525,7 @@ function renderRegionView(region, rd, history) {
   D.dimensions.forEach((d,i) => { dims[d.key] = i < scores.length ? scores[i] : null; });
 
   // Left: trend
-  let left = '<div class="detail-section"><h3>Score Trend</h3>';
+  let left = '<div class="detail-section sec-regional"><h3><span class="sec-swatch"></span>Score Trend</h3>';
   if (history.length) {
     left += '<div class="trend-chart">';
     const maxH = 86;
@@ -1439,10 +1546,10 @@ function renderRegionView(region, rd, history) {
   left += '</div>';
 
   // Middle: dims
-  let mid = '<div class="detail-section"><h3>Dimension Scores</h3>' + renderDimBars(dims) + '</div>';
+  let mid = '<div class="detail-section sec-dimensions"><h3><span class="sec-swatch"></span>Dimension Scores</h3>' + renderDimBars(dims) + '</div>';
 
   // Right: feedback
-  let right = '<div class="detail-section"><h3>Regional Feedback</h3>' + renderQualPlain(
+  let right = '<div class="detail-section sec-feedback"><h3><span class="sec-swatch"></span>Regional Feedback</h3>' + renderQualPlain(
     rd.working ? [rd.working] : [],
     rd.attention ? [rd.attention] : [],
     rd.escalation ? [rd.escalation] : []
