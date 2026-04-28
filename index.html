@@ -1620,5 +1620,24 @@ buildCards();
   });
 })();
 </script>
+
+<script>
+/* Action Framework link — injected by generate_partner_health_deck.py */
+(function() {
+  var conf = document.querySelector('.header-meta .confidential, .confidential');
+  if (!conf) return;
+  var link = document.createElement('a');
+  link.href = 'https://partner-health-action-framework.netlify.app';
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.textContent = 'Action Framework →';
+  link.style.cssText = 'color:#fff;text-decoration:none;font-size:inherit;opacity:0.85;';
+  link.addEventListener('mouseenter', function() { this.style.textDecoration = 'underline'; });
+  link.addEventListener('mouseleave', function() { this.style.textDecoration = 'none'; });
+  var sep = document.createTextNode(' · ');
+  conf.parentNode.insertBefore(link, conf);
+  conf.parentNode.insertBefore(sep, conf);
+})();
+</script>
 </body>
 </html>
