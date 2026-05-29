@@ -1612,12 +1612,41 @@ buildCards();
         spans[k].textContent = month; break;
       }
     }
+    /* Sync footer and portfolio composite subtitle with the selected month */
+    syncMonthLabels(month);
 
     /* Re-render everything */
     if (typeof buildSummary === 'function') buildSummary();
     if (typeof buildCards === 'function') buildCards();
     if (typeof closeModal === 'function') closeModal();
   });
+
+  /* --- Month label sync utility ----------------------------------------- */
+  /* Replaces any "Month YYYY" text in the footer and any element whose text
+     contains "PORTFOLIO COMPOSITE" (the summary card subtitle). Called once
+     at load (to fix a stale template bake) and again on every month change. */
+  function syncMonthLabels(month) {
+    /* Footer: replace any "Month YYYY" token inside the footer text */
+    var footer = document.querySelector('.footer, footer, [class*="footer"]');
+    if (footer) {
+      footer.innerHTML = footer.innerHTML.replace(
+        /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b/,
+        month
+      );
+    }
+    /* Portfolio composite subtitle (e.g. "PORTFOLIO COMPOSITE · APRIL 2026") */
+    document.querySelectorAll('*').forEach(function(el) {
+      if (el.children.length === 0 &&
+          /portfolio\s+composite/i.test(el.textContent)) {
+        el.textContent = el.textContent.replace(
+          /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b/i,
+          month
+        );
+      }
+    });
+  }
+  /* Run once at page load so a stale baked-in month is corrected */
+  syncMonthLabels(D.monthLabel);
 })();
 </script>
 
