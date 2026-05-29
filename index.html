@@ -1622,31 +1622,41 @@ buildCards();
   });
 
   /* --- Month label sync utility ----------------------------------------- */
-  /* Replaces any "Month YYYY" text in the footer and any element whose text
-     contains "PORTFOLIO COMPOSITE" (the summary card subtitle). Called once
-     at load (to fix a stale template bake) and again on every month change. */
+  /* Replaces any "Month YYYY" text (case-insensitive) in the footer and in
+     the portfolio composite subtitle. Called once at load to fix a stale
+     template bake, and again on every month-selector change. */
+  var MONTH_RE = /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b/i;
+
   function syncMonthLabels(month) {
-    /* Footer: replace any "Month YYYY" token inside the footer text */
-    var footer = document.querySelector('.footer, footer, [class*="footer"]');
-    if (footer) {
-      footer.innerHTML = footer.innerHTML.replace(
-        /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b/,
-        month
-      );
-    }
-    /* Portfolio composite subtitle (e.g. "PORTFOLIO COMPOSITE · APRIL 2026") */
+    /* Footer — try multiple selectors since the Claude Design template may
+       use a class different from ".footer" */
+    ['footer', '.footer', '[class*="footer"]', '.page-footer', '.site-footer']
+      .forEach(function(sel) {
+        document.querySelectorAll(sel).forEach(function(el) {
+          if (MONTH_RE.test(el.innerHTML)) {
+            el.innerHTML = el.innerHTML.replace(MONTH_RE, month);
+          }
+        });
+      });
+
+    /* Portfolio composite subtitle (e.g. "PORTFOLIO COMPOSITE · APRIL 2026")
+       and any other leaf element containing a month-year token */
     document.querySelectorAll('*').forEach(function(el) {
-      if (el.children.length === 0 &&
-          /portfolio\s+composite/i.test(el.textContent)) {
-        el.textContent = el.textContent.replace(
-          /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b/i,
-          month
-        );
+      if (el.children.length === 0 && MONTH_RE.test(el.textContent)) {
+        /* Skip the header month chip (already handled by the selector) */
+        if (el.closest && el.closest('.header-right, .header-meta')) return;
+        el.textContent = el.textContent.replace(MONTH_RE, month);
       }
     });
   }
-  /* Run once at page load so a stale baked-in month is corrected */
-  syncMonthLabels(D.monthLabel);
+
+  /* Run once at page load so a stale baked-in month is corrected.
+     Use DOMContentLoaded in case the shim runs before layout is ready. */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { syncMonthLabels(D.monthLabel); });
+  } else {
+    syncMonthLabels(D.monthLabel);
+  }
 })();
 </script>
 
