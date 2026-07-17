@@ -226,7 +226,7 @@ function cardHTML(r){
   '</div>';
 }
 
-function drawerHTML(){
+function drawerHTML(animate){
   const rows = computeRows();
   const selRow = rows.find(r => r.p.name === state.selected);
   if (!selRow) return '';
@@ -297,10 +297,12 @@ function drawerHTML(){
       escBlock + notesBlock;
   }
 
+  var ovAnim = animate ? 'animation:phFadeIn 0.2s ease;' : '';
+  var pnAnim = animate ? 'animation:phDrawerIn 0.25s ease;' : '';
   return '' +
   '<div style="position:fixed;inset:0;z-index:50;">' +
-    '<div data-act="close" style="position:absolute;inset:0;background:rgba(0,0,80,0.38);animation:phFadeIn 0.2s ease;"></div>' +
-    '<div style="position:absolute;top:0;right:0;bottom:0;width:min(560px,94vw);background:#fff;box-shadow:-20px 0 60px rgba(0,0,80,0.25);animation:phDrawerIn 0.25s ease;display:flex;flex-direction:column;">' +
+    '<div data-act="close" style="position:absolute;inset:0;background:rgba(0,0,80,0.38);' + ovAnim + '"></div>' +
+    '<div style="position:absolute;top:0;right:0;bottom:0;width:min(560px,94vw);background:#fff;box-shadow:-20px 0 60px rgba(0,0,80,0.25);' + pnAnim + 'display:flex;flex-direction:column;">' +
       '<div style="position:relative;background:linear-gradient(45deg,#5465FF 0%,#93DFE3 55%,#B0F467 100%);padding:24px 28px;overflow:hidden;flex:none;">' +
         '<div style="position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,80,0.10) 1.2px,transparent 1.2px);background-size:20px 20px;pointer-events:none;"></div>' +
         '<div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">' +
@@ -322,17 +324,35 @@ function drawerHTML(){
 
 function deltaVsLabel(){ return state.month > 0 ? 'vs ' + D.MONTHS[state.month - 1] : 'No prior month'; }
 
-function render(){
+function mainHTML(){
   const rows = computeRows();
   const reported = reportedRegions();
   const cards = sortRows(rows).map(cardHTML).join('');
-  const html = headerHTML(D.MONTHS[state.month]) +
+  return headerHTML(D.MONTHS[state.month]) +
     '<div style="position:relative;z-index:1;max-width:1240px;margin:-60px auto 0;padding:0 40px 56px;">' +
       portfolioHTML(rows, reported) + filtersHTML(reported) +
       '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;">' + cards + '</div>' +
-    '</div>' + drawerHTML();
-  document.getElementById('app').innerHTML = html;
+    '</div>';
 }
+
+// Tracks whether the drawer is currently mounted, so its slide-in animation
+// only plays on first open — a region switch while open refreshes the
+// contents in place (no re-animation, no flash).
+var phDrawerOpen = false;
+
+function render(){
+  document.getElementById('ph-main').innerHTML = mainHTML();
+  const dEl = document.getElementById('ph-drawer');
+  const dHtml = state.selected ? drawerHTML(!phDrawerOpen) : '';
+  if (!dHtml){
+    if (phDrawerOpen){ dEl.innerHTML = ''; phDrawerOpen = false; }
+    return;
+  }
+  dEl.innerHTML = dHtml;
+  phDrawerOpen = true;
+}
+
+document.getElementById('app').innerHTML = '<div id="ph-main"></div><div id="ph-drawer"></div>';
 
 document.getElementById('app').addEventListener('click', function(ev){
   let el = ev.target;
